@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // URL base do seu servidor proxy
     // Certifique-se de que esta porta (3001) corresponde à porta em que seu server.js está rodando.
-    const PROXY_BASE_URL = 'https://nfe-viewer-proxy.onrender.com';
+    const PROXY_BASE_URL = 'https://nefinfo.onrender.com';
 
     /**
      * Exibe o modal de erro com a mensagem fornecida.
