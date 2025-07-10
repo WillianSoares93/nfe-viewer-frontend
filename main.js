@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    toggleLoader(true, 'Enviando XML para API FSist...'); // Exibe loader
+                    toggleLoader(true, 'Gerando DANFE do XML...'); // Exibe loader
 
                     try {
                         const formData = new FormData();
