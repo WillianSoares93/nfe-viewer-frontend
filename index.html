@@ -197,22 +197,6 @@
         background-color: #002244; /* Azul mais escuro no hover */
     }
 
-    /* Estilos para o botão de Gerar DANFE */
-    .btn-generate-danfe {
-        margin-top: 20px;
-        background-color: #28a745; /* Verde para o botão de gerar */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        transition: background-color 0.3s ease;
-        margin-left: 10px; /* Espaçamento entre os botões */
-    }
-
-    .btn-generate-danfe:hover {
-        background-color: #218838; /* Verde mais escuro no hover */
-    }
-
     /* Estilos para o modal de erro personalizado */
     .error-modal {
       display: none; /* Escondido por padrão */
@@ -363,6 +347,15 @@
       text-decoration: underline;
     }
 
+    /* Estilo para o logo na navbar */
+    .navbar-brand img {
+      height: 30px; /* Altura do logo */
+      margin-right: 10px; /* Espaçamento à direita do logo */
+      border-radius: 4px; /* Bordas arredondadas para o logo na navbar */
+      background-color: transparent; /* Fundo transparente para o logo */
+      padding: 0; /* Remove o preenchimento */
+    }
+
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
       #upload-section h1 {
@@ -386,6 +379,16 @@
   </style>
 </head>
 <body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <!-- O logo foi removido daqui -->
+        NF-e Viewer
+      </a>
+    </div>
+  </nav>
+
   <!-- Sobreposição do Loader -->
   <div class="loader-overlay" id="loaderOverlay">
     <div class="loader"></div>
@@ -418,7 +421,7 @@
       <div class="card-header">O que o NF-e Viewer faz?</div>
       <div class="card-body">
         <p>O <strong>NF-e Viewer</strong> é uma ferramenta simples e eficiente para você visualizar o conteúdo de arquivos XML de Notas Fiscais Eletrônicas (NF-e) diretamente no seu navegador. Sem instalações ou cadastros!</p>
-        <p>Basta selecionar o arquivo XML da sua NF-e e a ferramenta irá extrair e apresentar de forma organizada todas as informações importantes, como dados do emitente e destinatário, lista de produtos/serviços, valores, impostos e muito mais. Além disso, você tem a opção de <strong>gerar o DANFE</strong> (Documento Auxiliar da Nota Fiscal Eletrônica) para impressão ou visualização rápida. Tenha controle e clareza sobre suas notas fiscais em segundos.</p>
+        <p>Basta selecionar o arquivo XML da sua NF-e e a ferramenta irá extrair e apresentar de forma organizada todas as informações importantes, como dados do emitente e destinatário, lista de produtos/serviços, valores, impostos e muito mais. Além disso, você tem a opção de gerar o DANFE (Documento Auxiliar da Nota Fiscal Eletrônica) para impressão ou visualização rápida. Tenha controle e clareza sobre suas notas fiscais em segundos.</p>
       </div>
     </div>
 
@@ -476,7 +479,7 @@
     </div>
     <div class="text-center mt-4">
         <button id="backToUploadBtn" class="btn btn-back-to-upload">Voltar para Carregar XML</button>
-        <button id="generateDanfeBtn" class="btn btn-generate-danfe">Gerar DANFE</button>
+        <!-- O botão Gerar DANFE foi removido daqui, pois será gerenciado pelo main.js -->
     </div>
   </div>
 
@@ -581,7 +584,7 @@
 
         const fileInput = document.getElementById('fileInput');
         const backToUploadBtn = document.getElementById('backToUploadBtn');
-        const generateDanfeBtn = document.getElementById('generateDanfeBtn');
+        // A constante generateDanfeBtn e seu event listener foram removidos
         const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
 
         const linkAbout = document.getElementById('link-about');
@@ -617,14 +620,6 @@
 
                     showSection(viewerSection); // Exibe a seção do visualizador
                 }
-            });
-        }
-
-        // Event listener para o botão "Gerar DANFE"
-        if (generateDanfeBtn) {
-            generateDanfeBtn.addEventListener('click', () => {
-                console.log('Botão Gerar DANFE clicado! Implementar lógica de geração de DANFE aqui.');
-                alert('Funcionalidade de Gerar DANFE ainda não implementada. Verifique o console para a mensagem.');
             });
         }
 
