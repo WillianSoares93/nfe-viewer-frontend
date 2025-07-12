@@ -111,42 +111,42 @@
     /* Estilos para o novo layout de seleção/leitura de arquivo */
     .custom-file-input-wrapper {
         position: relative;
-        display: flex; /* Use flex para alinhar label e file name display */
+        display: flex;
         flex-direction: column; /* Empilhar label e nome do arquivo */
         align-items: flex-start; /* Alinhar texto ao início */
         width: 100%;
-        max-width: 250px; /* Ajustar largura conforme necessário */
+        max-width: 300px; /* Ajustar largura conforme necessário */
     }
 
     .custom-label-file-select {
-        display: block;
-        background-color: var(--primary-orange);
-        color: white;
-        padding: 8px 15px; /* Preenchimento menor para um botão mais compacto */
+        display: flex; /* Use flex para alinhar conteúdo dentro do label */
+        align-items: center; /* Centralizar texto verticalmente */
+        background-color: #ebeff1; /* Fundo cinza claro para a barra */
+        color: #a9a9a9; /* Cor de texto cinza para a mensagem padrão */
+        padding: 9px 15px; /* Ajustar preenchimento para parecer uma barra */
         border-radius: 8px;
-        text-align: center;
+        text-align: left; /* Alinhar texto à esquerda */
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
-        font-weight: 600;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 5px; /* Espaço entre o label e o nome do arquivo */
-        width: 100%; /* Fazer o label preencher seu contêiner */
+        font-weight: 500; /* Um pouco menos negrito que um botão */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* Sombra mais suave */
+        width: 100%; /* Fazer com que preencha seu contêiner */
+        min-height: 44px; /* Garantir uma altura mínima para a barra */
     }
 
     .custom-label-file-select:hover {
-        background-color: #e05b1e;
-        transform: translateY(-2px);
+        background-color: #e0e5e8; /* Cinza ligeiramente mais escuro no hover */
+        transform: translateY(-1px); /* Leve efeito de "levantar" */
     }
 
     .file-name-display {
-        font-size: 0.85rem;
-        color: #555;
+        font-size: 1rem; /* Ajustar tamanho da fonte para melhor legibilidade na barra */
+        color: #a9a9a9; /* Cor de texto padrão */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 100%;
-        text-align: left;
-        padding-left: 5px; /* Pequeno preenchimento para alinhar com o label */
+        flex-grow: 1; /* Permitir que ocupe o espaço disponível */
+        padding-right: 10px; /* Espaço para reticências, se necessário */
     }
 
     .custom-read-xml-btn {
@@ -154,11 +154,11 @@
         color: white;
         border: none;
         border-radius: 8px;
-        padding: 10px 20px;
+        padding: 9px 20px; /* Ajustar preenchimento para corresponder à altura da barra */
         transition: background-color 0.3s ease, transform 0.2s ease;
         font-weight: 600;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        min-width: 120px; /* Garantir que o botão tenha uma largura mínima */
+        min-width: 130px; /* Garantir que o botão tenha uma largura mínima */
     }
 
     .custom-read-xml-btn:hover {
@@ -413,7 +413,7 @@
         .custom-file-input-wrapper {
             margin-right: 0 !important; /* Remover margem para empilhamento */
             margin-bottom: 15px; /* Adicionar espaço entre elementos empilhados */
-            max-width: 300px; /* Permitir largura maior em telas pequenas se empilhado */
+            max-width: 100%; /* Permitir largura maior em telas pequenas se empilhado */
         }
         .custom-read-xml-btn {
             width: 100%; /* Largura total quando empilhado */
@@ -459,11 +459,12 @@
     </section>
 
     <!-- Novo layout de seleção/leitura de arquivo -->
-    <div class="d-flex justify-content-center align-items-center mb-4">
-        <div class="custom-file-input-wrapper me-3">
-            <label for="fileInput" class="custom-label-file-select">Escolha seu arquivo XML</label>
+    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mb-4">
+        <div class="custom-file-input-wrapper me-md-3 mb-3 mb-md-0">
+            <label for="fileInput" class="custom-label-file-select">
+                <span id="fileNameDisplay" class="file-name-display">Clique aqui e Escolha Seus XMLs NFe ou CTe</span>
+            </label>
             <input type="file" id="fileInput" accept=".xml" style="display: none;">
-            <span id="fileNameDisplay" class="file-name-display">Nenhum arquivo selecionado</span>
         </div>
         <button id="readXmlBtn" class="btn btn-primary custom-read-xml-btn">Ler XML</button>
     </div>
