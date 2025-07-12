@@ -12,6 +12,9 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #f8f9fa; /* Fundo cinza claro */
       color: #333; /* Cor de texto padrão */
+      display: flex; /* Usar flexbox para o layout principal */
+      flex-direction: column; /* Conteúdo em coluna */
+      min-height: 100vh; /* Ocupa a altura total da viewport */
     }
 
     :root {
@@ -82,6 +85,7 @@
       min-height: 80vh; /* Ocupa a maior parte da altura da viewport */
       padding: 20px;
       text-align: center;
+      flex-grow: 1; /* Permite que esta seção ocupe o espaço disponível */
     }
 
     #upload-section .logo {
@@ -134,18 +138,11 @@
       transform: translateY(-2px); /* Efeito de "levantar" no hover */
     }
 
-    .footer {
-      font-size: 0.9rem;
-      color: var(--primary-blue);
-      text-align: center;
-      margin-top: 20px;
-      font-weight: 500;
-    }
-
     /* Estilos para a seção do visualizador de NF-e */
     #viewer-section {
       display: none; /* Escondido por padrão, será exibido via JS */
       padding: 20px;
+      flex-grow: 1; /* Permite que esta seção ocupe o espaço disponível */
     }
 
     /* Estilos para os itens da lista de produtos */
@@ -200,19 +197,35 @@
         background-color: #002244; /* Azul mais escuro no hover */
     }
 
+    /* Estilos para o botão de Gerar DANFE */
+    .btn-generate-danfe {
+        margin-top: 20px;
+        background-color: #28a745; /* Verde para o botão de gerar */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+        margin-left: 10px; /* Espaçamento entre os botões */
+    }
+
+    .btn-generate-danfe:hover {
+        background-color: #218838; /* Verde mais escuro no hover */
+    }
+
     /* Estilos para o modal de erro personalizado */
     .error-modal {
       display: none; /* Escondido por padrão */
       position: fixed; /* Fixado na tela */
-      z-index: 10000; /* Acima de tudo */
-      left: 0;
       top: 0;
+      left: 0;
       width: 100%; /* Largura total */
       height: 100%; /* Altura total */
       overflow: auto; /* Permite rolagem se o conteúdo for grande */
       background-color: rgba(0,0,0,0.4); /* Fundo semi-transparente */
       justify-content: center; /* Centraliza horizontalmente */
       align-items: center; /* Centraliza verticalmente */
+      z-index: 10000; /* Acima de tudo */
     }
 
     .error-modal-content {
@@ -251,6 +264,105 @@
       background-color: #002244; /* Azul mais escuro no hover */
     }
 
+    /* Estilos para as novas seções de conteúdo que são ocultáveis */
+    .content-section {
+      display: none; /* Escondido por padrão */
+      padding: 40px 20px;
+      flex-grow: 1; /* Permite que ocupe o espaço disponível */
+    }
+
+    .content-section h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .content-section p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    .content-section ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        margin-bottom: 15px;
+    }
+
+    .content-section ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Estilos para a seção de conteúdo principal (agora dentro de upload-section) */
+    #main-info-content {
+        padding: 40px 20px;
+        text-align: center; /* Centraliza o título */
+        width: 100%; /* Ocupa a largura total dentro do flex container */
+        max-width: 800px; /* Limita a largura para melhor leitura */
+        margin-top: 40px; /* Espaçamento do botão de upload */
+    }
+
+    #main-info-content h1 {
+        margin-bottom: 30px;
+        color: var(--primary-blue);
+    }
+
+    #main-info-content h2 {
+        color: var(--primary-orange);
+        margin-top: 25px;
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    #main-info-content p {
+        margin-bottom: 15px;
+        text-align: justify;
+    }
+
+    #main-info-content ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    #main-info-content ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Estilos para o novo quadro de descrição da ferramenta */
+    #tool-description-card {
+        max-width: 800px; /* Mesma largura do conteúdo principal */
+        width: 100%;
+        margin-top: 30px; /* Espaçamento do input de arquivo */
+        text-align: left; /* Alinha o texto dentro do card */
+    }
+
+    #tool-description-card h2 {
+        color: var(--primary-blue);
+        margin-bottom: 15px;
+        text-align: center; /* Centraliza o título do quadro */
+    }
+
+    /* Estilos para o rodapé */
+    .footer {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: auto; /* Empurra o rodapé para o final da página */
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: text-decoration 0.3s ease;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
       #upload-section h1 {
@@ -265,6 +377,10 @@
       }
       #productDetails, #productList .list-group-item {
         font-size: 0.85rem;
+      }
+      .footer a {
+          display: block;
+          margin: 5px 0;
       }
     }
   </style>
@@ -297,10 +413,43 @@
       <input type="file" id="fileInput" accept=".xml">
     </div>
 
-    <div class="footer">Versão 2.0</div>
-    <!-- Créditos adicionados aqui -->
-    <div class="footer">
-      Developed by <a href="https://www.instagram.com/willian_soares93/" target="_blank" style="color: var(--primary-blue); text-decoration: none; font-weight: bold;">Willian Soares</a>
+    <!-- Novo Quadro: O que a ferramenta faz -->
+    <div id="tool-description-card" class="card">
+      <div class="card-header">O que o NF-e Viewer faz?</div>
+      <div class="card-body">
+        <p>O <strong>NF-e Viewer</strong> é uma ferramenta simples e eficiente para você visualizar o conteúdo de arquivos XML de Notas Fiscais Eletrônicas (NF-e) diretamente no seu navegador. Sem instalações ou cadastros!</p>
+        <p>Basta selecionar o arquivo XML da sua NF-e e a ferramenta irá extrair e apresentar de forma organizada todas as informações importantes, como dados do emitente e destinatário, lista de produtos/serviços, valores, impostos e muito mais. Além disso, você tem a opção de <strong>gerar o DANFE</strong> (Documento Auxiliar da Nota Fiscal Eletrônica) para impressão ou visualização rápida. Tenha controle e clareza sobre suas notas fiscais em segundos.</p>
+      </div>
+    </div>
+
+    <!-- Seção de Conteúdo Principal: XML, DANFE e Curiosidades (agora dentro de upload-section) -->
+    <div id="main-info-content" class="container mt-4">
+      <h1>XML, DANFE e Curiosidades da NF-e</h1>
+      <p>A Nota Fiscal Eletrônica (NF-e) revolucionou a forma como as empresas documentam suas operações comerciais. Mas você sabe o que é o XML e o DANFE, e algumas curiosidades sobre esse documento tão importante?</p>
+
+      <h2>O que é o XML da NF-e?</h2>
+      <p>O XML (eXtensible Markup Language) é o formato padrão e legal da Nota Fiscal Eletrônica. Ele é um arquivo digital que contém todas as informações fiscais da operação, como dados do emitente e destinatário, produtos/serviços, valores, impostos, e a assinatura digital que garante sua autenticidade e integridade. É o arquivo XML que tem validade jurídica e deve ser armazenado por um período mínimo de 5 anos.</p>
+      <p>Diferente de um PDF, o XML é estruturado de forma a ser facilmente lido e processado por sistemas de computador, permitindo a automação da escrituração fiscal e contábil.</p>
+
+      <h2>E o DANFE?</h2>
+      <p>O DANFE (Documento Auxiliar da Nota Fiscal Eletrônica) é uma representação gráfica simplificada do XML da NF-e. Ele não é a nota fiscal em si, mas um documento auxiliar que acompanha a mercadoria em trânsito e contém as informações essenciais da NF-e, como chave de acesso, dados do emitente e destinatário, descrição dos produtos e valores totais.</p>
+      <p>O DANFE serve para:</p>
+      <ul>
+          <li>Acompanhar o transporte da mercadoria.</li>
+          <li>Permitir a consulta da NF-e original no site da Secretaria da Fazenda (SEFAZ) através da chave de acesso.</li>
+          <li>Auxiliar na conferência da mercadoria no recebimento.</li>
+      </ul>
+      <p>É importante lembrar que o DANFE sem o seu respectivo XML não tem validade fiscal.</p>
+
+      <h2>Curiosidades sobre a NF-e</h2>
+      <ul>
+          <li><strong>Redução da Burocracia:</strong> A NF-e foi criada para substituir os talões de notas fiscais em papel, reduzindo custos com impressão, armazenamento e envio, além de agilizar o processo de fiscalização.</li>
+          <li><strong>Chave de Acesso:</strong> Cada NF-e possui uma chave de acesso única de 44 dígitos. Essa chave é fundamental para consultar a validade e autenticidade da nota no portal da SEFAZ.</li>
+          <li><strong>Assinatura Digital:</strong> A validade jurídica da NF-e é garantida pela assinatura digital do emitente, que utiliza um certificado digital. Isso assegura a autoria e a integridade do documento.</li>
+          <li><strong>Eventos da NF-e:</strong> Além da emissão, a NF-e pode ter diversos "eventos" associados, como Carta de Correção Eletrônica (CC-e), Cancelamento, Manifestação do Destinatário (Ciência da Emissão, Confirmação da Operação, Desconhecimento da Operação, Operação Não Realizada).</li>
+          <li><strong>Armazenamento Obrigatório:</strong> Tanto o emitente quanto o destinatário da NF-e são obrigados a armazenar o arquivo XML por um período mínimo de 5 anos, contados a partir da data de emissão.</li>
+          <li><strong>Benefícios Ambientais:</strong> A digitalização da nota fiscal contribuiu significativamente para a redução do consumo de papel.</li>
+      </ul>
     </div>
   </div>
 
@@ -327,8 +476,87 @@
     </div>
     <div class="text-center mt-4">
         <button id="backToUploadBtn" class="btn btn-back-to-upload">Voltar para Carregar XML</button>
+        <button id="generateDanfeBtn" class="btn btn-generate-danfe">Gerar DANFE</button>
     </div>
   </div>
+
+  <!-- Novas Seções de Conteúdo (ocultas por padrão) -->
+
+  <!-- Seção Sobre -->
+  <div id="about-section" class="content-section container">
+    <h1>Sobre o NF-e Viewer</h1>
+    <p>O NF-e Viewer é uma ferramenta online gratuita desenvolvida para simplificar a visualização e análise de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Nosso objetivo é proporcionar uma maneira rápida e eficiente para que empresas e indivíduos possam inspecionar o conteúdo de suas NF-e sem a necessidade de softwares complexos ou conhecimentos técnicos aprofundados.</p>
+    <p>Com uma interface intuitiva, você pode carregar seu arquivo XML e ter acesso imediato aos detalhes da nota, como informações do emitente, destinatário, produtos/serviços, valores e muito mais. Acreditamos que a transparência e o acesso fácil à informação fiscal são cruciais para a gestão eficiente.</p>
+    <p>Estamos constantemente trabalhando para melhorar e expandir as funcionalidades do NF-e Viewer, sempre com foco na usabilidade e na segurança dos dados.</p>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Seção Política de Privacidade -->
+  <div id="privacy-policy-section" class="content-section container">
+    <h1>Política de Privacidade</h1>
+    <p>A sua privacidade é de extrema importância para nós. Esta Política de Privacidade descreve como o NF-e Viewer coleta, usa e protege suas informações.</p>
+    <h2>Coleta de Dados</h2>
+    <p>O NF-e Viewer é uma aplicação que funciona <strong>inteiramente no seu navegador</strong>. Isso significa que:</p>
+    <ul>
+        <li><strong>Não coletamos, armazenamos ou transmitimos seus arquivos XML de NF-e.</strong> Todo o processamento dos dados do XML ocorre localmente no seu dispositivo.</li>
+        <li>Não solicitamos nem armazenamos informações pessoais identificáveis, como nome, e-mail, CPF/CNPJ ou dados bancários.</li>
+        <li>Não utilizamos cookies para rastreamento de usuários ou para coletar informações sobre sua navegação.</li>
+    </ul>
+    <h2>Uso de Dados</h2>
+    <p>As informações contidas nos arquivos XML que você carrega são utilizadas exclusivamente para a visualização e análise dentro do seu navegador. Uma vez que você fecha a página ou carrega um novo arquivo, os dados do XML anterior são descartados da memória.</p>
+    <h2>Segurança</h2>
+    <p>Implementamos medidas de segurança para proteger a integridade de nossa aplicação, mas é importante ressaltar que a segurança dos dados do XML depende do seu próprio dispositivo, já que o processamento é local.</p>
+    <h2>Alterações na Política de Privacidade</h2>
+    <p>Podemos atualizar nossa Política de Privacidade periodicamente. Recomendamos que você revise esta página para quaisquer alterações. As alterações são efetivas quando publicadas nesta página.</p>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Seção Termos de Uso -->
+  <div id="terms-of-use-section" class="content-section container">
+    <h1>Termos de Uso</h1>
+    <p>Bem-vindo ao NF-e Viewer. Ao utilizar esta ferramenta, você concorda com os seguintes termos e condições:</p>
+    <h2>1. Uso da Ferramenta</h2>
+    <p>O NF-e Viewer é fornecido como um serviço gratuito para visualização de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Você é responsável pelo uso dos arquivos que carrega e pela conformidade com as leis e regulamentos aplicáveis.</p>
+    <h2>2. Processamento de Dados</h2>
+    <p>Todo o processamento dos arquivos XML ocorre no seu navegador. O NF-e Viewer não coleta, armazena ou transmite seus dados de NF-e para nossos servidores. Sua privacidade é garantida pelo processamento local.</p>
+    <h2>3. Isenção de Garantias</h2>
+    <p>A ferramenta é fornecida "como está", sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que a ferramenta será ininterrupta, livre de erros ou que os resultados obtidos com seu uso serão precisos ou confiáveis.</p>
+    <h2>4. Limitação de Responsabilidade</h2>
+    <p>Em nenhuma circunstância o NF-e Viewer ou seus criadores serão responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais ou consequenciais decorrentes do uso ou da incapacidade de usar a ferramenta.</p>
+    <h2>5. Alterações nos Termos</h2>
+    <p>Reservamo-nos o direito de modificar estes Termos de Uso a qualquer momento. O uso continuado da ferramenta após a publicação de alterações constitui sua aceitação dos termos revisados.</p>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Seção Contato -->
+  <div id="contact-section" class="content-section container">
+    <h1>Contato</h1>
+    <p>Se você tiver dúvidas, sugestões ou precisar de suporte, entre em contato conosco.</p>
+    <p>Você pode nos enviar um e-mail para: <a href="mailto:suporte@nfeviewer.com.br">suporte@nfeviewer.com.br</a></p>
+    <p>Agradecemos seu feedback e faremos o possível para responder o mais breve possível.</p>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Rodapé da Página -->
+  <footer class="footer">
+    <div>
+      © 2025 NF-e Viewer. Todos os direitos reservados.
+    </div>
+    <div class="mt-2">
+      <a href="#" id="link-about">Sobre</a> |
+      <a href="#" id="link-privacy">Política de Privacidade</a> |
+      <a href="#" id="link-terms">Termos de Uso</a> |
+      <a href="#" id="link-contact">Contato</a>
+    </div>
+  </footer>
 
   <!-- Link para o Bootstrap JS (com Popper.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -336,5 +564,109 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Nosso script principal -->
   <script src="main.js"></script>
+  <script>
+    // Este script deve ser integrado ao seu 'main.js' para melhor organização.
+    // Ele gerencia a visibilidade das diferentes seções da página.
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const uploadSection = document.getElementById('upload-section');
+        const viewerSection = document.getElementById('viewer-section');
+        const aboutSection = document.getElementById('about-section');
+        const privacySection = document.getElementById('privacy-policy-section');
+        const termsSection = document.getElementById('terms-of-use-section');
+        const contactSection = document.getElementById('contact-section');
+        // mainInfoContent e toolDescriptionCard agora estão dentro de uploadSection,
+        // então não precisam ser gerenciados separadamente aqui, pois sua visibilidade
+        // será controlada pela visibilidade de uploadSection.
+
+        const fileInput = document.getElementById('fileInput');
+        const backToUploadBtn = document.getElementById('backToUploadBtn');
+        const generateDanfeBtn = document.getElementById('generateDanfeBtn');
+        const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
+
+        const linkAbout = document.getElementById('link-about');
+        const linkPrivacy = document.getElementById('link-privacy');
+        const linkTerms = document.getElementById('link-terms');
+        const linkContact = document.getElementById('link-contact');
+
+        // Função para mostrar uma seção e esconder as outras
+        function showSection(sectionToShow) {
+            const allSections = [uploadSection, viewerSection, aboutSection, privacySection, termsSection, contactSection];
+
+            allSections.forEach(section => {
+                if (section) {
+                    section.style.display = 'none';
+                }
+            });
+
+            if (sectionToShow) {
+                if (sectionToShow === uploadSection || sectionToShow === aboutSection || sectionToShow === privacySection || sectionToShow === termsSection || sectionToShow === contactSection) {
+                    sectionToShow.style.display = 'flex';
+                } else if (sectionToShow === viewerSection) {
+                    sectionToShow.style.display = 'block';
+                }
+            }
+        }
+
+        // Event listener para o input de arquivo
+        if (fileInput) {
+            fileInput.addEventListener('change', (event) => {
+                if (event.target.files.length > 0) {
+                    console.log('Arquivo selecionado:', event.target.files[0].name);
+                    // Em um cenário real, você processaria o XML aqui e preencheria o visualizador.
+
+                    showSection(viewerSection); // Exibe a seção do visualizador
+                }
+            });
+        }
+
+        // Event listener para o botão "Gerar DANFE"
+        if (generateDanfeBtn) {
+            generateDanfeBtn.addEventListener('click', () => {
+                console.log('Botão Gerar DANFE clicado! Implementar lógica de geração de DANFE aqui.');
+                alert('Funcionalidade de Gerar DANFE ainda não implementada. Verifique o console para a mensagem.');
+            });
+        }
+
+        // Event listeners para os links do rodapé
+        linkAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection(aboutSection);
+        });
+
+        linkPrivacy.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection(privacySection);
+        });
+
+        linkTerms.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection(termsSection);
+        });
+
+        linkContact.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection(contactSection);
+        });
+
+        // Event listener para o botão "Voltar para Carregar XML" na seção do visualizador
+        if (backToUploadBtn) {
+            backToUploadBtn.addEventListener('click', () => {
+                showSection(uploadSection);
+            });
+        }
+
+        // Event listeners para os botões "Voltar" nas novas seções de conteúdo
+        backToMainButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showSection(uploadSection); // Volta para a seção de upload principal
+            });
+        });
+
+        // Garante que a seção de upload (e, portanto, as curiosidades e o novo quadro)
+        // esteja visível por padrão ao carregar a página.
+        showSection(uploadSection);
+    });
+  </script>
 </body>
 </html>
