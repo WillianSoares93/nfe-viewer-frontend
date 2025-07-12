@@ -3,6 +3,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Referências aos elementos HTML
     const fileInput = document.getElementById("fileInput");
+    const fileNameDisplay = document.getElementById("fileNameDisplay"); // Novo elemento para exibir o nome do arquivo
+    const readXmlBtn = document.getElementById("readXmlBtn"); // Novo botão para ler XML
     const uploadSection = document.getElementById("upload-section");
     const viewerSection = document.getElementById("viewer-section");
     const loaderOverlay = document.getElementById('loaderOverlay');
@@ -16,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const errorModalCloseBtn = document.getElementById('errorModalCloseBtn');
 
     let currentXmlContent = ''; // Variável para armazenar o conteúdo XML
+    let selectedFile = null; // Variável para armazenar o arquivo selecionado
 
     // URL base do seu servidor proxy
     // Certifique-se de que esta porta (3001) corresponde à porta em que seu server.js está rodando.
@@ -536,25 +539,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Event listener para o input de arquivo (quando um arquivo é selecionado)
-    fileInput.addEventListener("change", async (event) => {
+    fileInput.addEventListener("change", (event) => {
         const file = event.target.files[0];
-        if (!file) return; // Sai se nenhum arquivo for selecionado
-
-        try {
-            toggleLoader(true, 'Carregando arquivo...'); // Exibe loader
-            const xmlContent = await readFileAsText(file); // Lê o arquivo
-            await processAndDisplayXml(xmlContent); // Processa e exibe o XML
-        } catch (error) {
-            console.error("Erro ao carregar arquivo:", error);
-            showErrorMessage("Erro ao Carregar Arquivo", error.message); // Exibe erro no modal
-            toggleLoader(false); // Oculta o loader
-            // Garante que a seção de upload esteja visível em caso de erro no carregamento inicial
-            uploadSection.style.display = 'flex';
-            viewerSection.style.display = 'none';
-        } finally {
-            fileInput.value = ""; // Reseta o input de arquivo para permitir selecionar o mesmo arquivo novamente
+        if (file) {
+            selectedFile = file; // Armazena o arquivo selecionado
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = file.name; // Exibe o nome do arquivo
+            }
+        } else {
+            selectedFile = null;
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = "Nenhum arquivo selecionado";
+            }
         }
     });
+
+    // Event listener para o novo botão "Ler XML"
+    if (readXmlBtn) {
+        readXmlBtn.addEventListener("click", async () => {
+            if (!selectedFile) {
+                showErrorMessage("Nenhum Arquivo Selecionado", "Por favor, selecione um arquivo XML antes de clicar em 'Ler XML'.");
+                return;
+            }
+
+            try {
+                toggleLoader(true, 'Carregando e processando XML...'); // Exibe loader
+                const xmlContent = await readFileAsText(selectedFile); // Lê o arquivo
+                await processAndDisplayXml(xmlContent); // Processa e exibe o XML
+            } catch (error) {
+                console.error("Erro ao ler ou processar arquivo:", error);
+                showErrorMessage("Erro ao Ler ou Processar Arquivo", error.message); // Exibe erro no modal
+                toggleLoader(false); // Oculta o loader
+                // Garante que a seção de upload esteja visível em caso de erro no carregamento inicial
+                uploadSection.style.display = 'flex';
+                viewerSection.style.display = 'none';
+            } finally {
+                // Não há necessidade de resetar fileInput.value aqui,
+                // pois queremos manter o arquivo selecionado exibido
+                // até que um novo seja escolhido ou o usuário retorne à seção de upload.
+            }
+        });
+    }
 
     // Event listener para o botão "Voltar para Carregar XML"
     if (backToUploadBtn) {
@@ -567,6 +592,56 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("productList").innerHTML = '';
             document.getElementById("productDetails").innerHTML = '<p class="text-center">Selecione um produto para ver os detalhes.</p>';
             currentXmlContent = ''; // Limpa o XML armazenado
+            selectedFile = null; // Limpa o arquivo selecionado
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = "Nenhum arquivo selecionado"; // Reseta a exibição do nome do arquivo
+            }
         });
     }
+
+    // Gerencia a visibilidade das seções da página e reseta o estado do arquivo
+    const allSections = [uploadSection, viewerSection, document.getElementById('about-section'), document.getElementById('privacy-policy-section'), document.getElementById('terms-of-use-section'), document.getElementById('contact-section')];
+    const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
+
+    function showSection(sectionToShow) {
+        allSections.forEach(section => {
+            if (section) {
+                section.style.display = 'none';
+            }
+        });
+
+        if (sectionToShow) {
+            if (sectionToShow === uploadSection || sectionToShow === document.getElementById('about-section') || sectionToShow === document.getElementById('privacy-policy-section') || sectionToShow === document.getElementById('terms-of-use-section') || sectionToShow === document.getElementById('contact-section')) {
+                sectionToShow.style.display = 'flex';
+                if (sectionToShow === uploadSection) {
+                    selectedFile = null; // Limpa o arquivo selecionado ao voltar para a seção de upload
+                    if (fileNameDisplay) {
+                        fileNameDisplay.textContent = "Nenhum arquivo selecionado"; // Reseta a exibição
+                    }
+                }
+            } else if (sectionToShow === viewerSection) {
+                sectionToShow.style.display = 'block';
+            }
+        }
+    }
+
+    // Event listeners para os links do rodapé e botões de voltar
+    const linkAbout = document.getElementById('link-about');
+    const linkPrivacy = document.getElementById('link-privacy');
+    const linkTerms = document.getElementById('link-terms');
+    const linkContact = document.getElementById('link-contact');
+
+    if (linkAbout) linkAbout.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('about-section')); });
+    if (linkPrivacy) linkPrivacy.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('privacy-policy-section')); });
+    if (linkTerms) linkTerms.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('terms-of-use-section')); });
+    if (linkContact) linkContact.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('contact-section')); });
+
+    backToMainButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            showSection(uploadSection);
+        });
+    });
+
+    // Garante que a seção de upload esteja visível por padrão ao carregar a página.
+    showSection(uploadSection);
 });
