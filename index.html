@@ -109,13 +109,19 @@
     }
 
     /* Estilos para o novo layout de seleção/leitura de arquivo */
+    .upload-controls-container {
+        max-width: 800px; /* Alinha com a largura do card abaixo */
+        width: 100%; /* Garante que ocupe a largura total disponível até o max-width */
+        margin-left: auto; /* Centraliza o container */
+        margin-right: auto; /* Centraliza o container */
+    }
+
     .custom-file-input-wrapper {
         position: relative;
         display: flex;
-        /* flex-direction: column; Removido para alinhar horizontalmente */
         align-items: center; /* Alinhar itens verticalmente no centro */
-        width: 100%;
-        max-width: 350px; /* Aumentado o tamanho da barra */
+        flex-grow: 1; /* Permite que a barra cresça e preencha o espaço disponível */
+        max-width: none; /* Remove a restrição de largura anterior */
     }
 
     .custom-label-file-select {
@@ -463,8 +469,8 @@
     </section>
 
     <!-- Novo layout de seleção/leitura de arquivo -->
-    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mb-4">
-        <div class="custom-file-input-wrapper me-md-0 mb-3 mb-md-0"> <!-- Removido me-md-3 e ajustado mb-3 -->
+    <div class="upload-controls-container d-flex flex-column flex-md-row justify-content-center align-items-center mb-4">
+        <div class="custom-file-input-wrapper me-md-0 mb-3 mb-md-0">
             <label for="fileInput" class="custom-label-file-select">
                 <span id="fileNameDisplay" class="file-name-display">Clique aqui e Escolha Seu XML NFe</span>
             </label>
