@@ -76,10 +76,11 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Estilos para as seções de conteúdo que são ocultáveis (agora páginas separadas) */
+    /* Estilos para as seções de conteúdo (agora páginas separadas) */
     .content-section {
       padding: 40px 20px;
       flex-grow: 1; /* Permite que ocupe o espaço disponível */
+      text-align: center; /* Centraliza o conteúdo da seção */
     }
 
     .content-section h1 {
@@ -89,13 +90,19 @@
 
     .content-section p {
       margin-bottom: 15px;
-      text-align: justify;
+      text-align: justify; /* Justifica o texto para melhor leitura */
+      max-width: 800px; /* Limita a largura do parágrafo */
+      margin-left: auto; /* Centraliza o parágrafo */
+      margin-right: auto; /* Centraliza o parágrafo */
     }
 
     .content-section ul {
         list-style-type: disc;
-        margin-left: 20px;
-        margin-bottom: 15px;
+        margin-left: auto; /* Centraliza a lista */
+        margin-right: auto; /* Centraliza a lista */
+        max-width: 800px; /* Limita a largura da lista */
+        padding-left: 40px; /* Ajusta o padding para a lista */
+        text-align: justify; /* Justifica o texto da lista */
     }
 
     .content-section ul li {
@@ -147,6 +154,159 @@
       padding: 0; /* Remove o preenchimento */
     }
 
+    /* Estilos do formulário de contato */
+    .contatocampos {
+        background: #ebeff1;
+        color: #596364;
+        margin-bottom: 27px;
+        border-radius: 8px; /* Adicionado para consistência */
+        overflow: hidden; /* Garante que o conteúdo não vaze do border-radius */
+    }
+
+    .contatocampos input,
+    .contatocampos select,
+    .contatocampos textarea {
+        color: #596364; /* Cor de texto mais escura para melhor contraste */
+        font-size: 18px; /* Ajustado para um tamanho mais comum */
+        background: #ebeff1;
+        line-height: 2.5rem; /* Ajustado para melhor espaçamento */
+        width: 100%;
+        border: 0;
+        outline: 0;
+        padding: 0 15px; /* Adicionado padding para os inputs */
+        box-sizing: border-box; /* Inclui padding na largura total */
+    }
+
+    .contatocampos textarea {
+        padding: 15px; /* Mais padding para textarea */
+        min-height: 120px; /* Altura mínima para textarea */
+        resize: vertical; /* Permite redimensionar verticalmente */
+    }
+
+    .contatocampos span {
+        color: #596364; /* Cor de texto mais escura para o span */
+        font-size: 18px; /* Ajustado para um tamanho mais comum */
+        background: #ebeff1;
+        line-height: 2.5rem; /* Ajustado para melhor espaçamento */
+        width: 100%;
+        border: 0;
+        outline: 0;
+        display: inline-block;
+        padding: 0 15px; /* Adicionado padding para o span */
+        box-sizing: border-box;
+        text-align: left; /* Alinha o texto do span à esquerda */
+    }
+
+    .butenviar {
+        cursor: pointer;
+        border: 0px none;
+        padding: 12px 30px; /* Ajustado padding */
+        font-size: 16px; /* Ajustado tamanho da fonte */
+        font-weight: bold;
+        font-family: 'Segoe UI', sans-serif; /* Consistente com o body */
+        color: white;
+        background-color: var(--primary-orange); /* Usando a cor laranja principal */
+        border-radius: 8px; /* Bordas arredondadas */
+        transition: background-color 0.3s ease;
+    }
+
+    .butenviar:hover {
+        background-color: #d85c1b; /* Laranja um pouco mais escuro no hover */
+    }
+
+    .contato-form-container {
+        max-width: 600px; /* Largura máxima para o formulário */
+        margin: 0 auto; /* Centraliza o formulário */
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .contato-form-container h1 {
+        color: var(--primary-blue);
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+
+    .contato-form-container #texto2 {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .contatocampos table {
+        width: 100%;
+        border-collapse: collapse; /* Remove espaçamento entre células */
+    }
+
+    .contatocampos table td {
+        padding: 0; /* Remove padding padrão da célula */
+        vertical-align: middle;
+    }
+
+    .contatocampos table td:first-child {
+        width: 50px; /* Largura para o ícone */
+        padding: 15px; /* Padding para o ícone */
+        text-align: center;
+    }
+
+    /* Estilos para os ícones */
+    .img-cont {
+        background-image: url(data:image/png;base64,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);
+        background-repeat: no-repeat;
+        display: block;
+        width: 27px; /* Tamanho fixo para os ícones */
+        height: 27px; /* Tamanho fixo para os ícones */
+    }
+
+    .img-cont-chave {
+        background-position: -5px -5px;
+    }
+
+    .img-cont-email {
+        background-position: -42px -5px;
+    }
+
+    .img-cont-screen {
+        background-position: -5px -42px;
+    }
+
+    .img-cont-tipo {
+        background-position: -42px -42px;
+    }
+
+    /* Estilos para a barra de progresso de upload */
+    .barra-fundo {
+        width: 100%;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin-top: 10px;
+        height: 20px;
+        position: relative;
+    }
+
+    .barra {
+        height: 100%;
+        width: 0%;
+        background-color: var(--primary-orange);
+        border-radius: 5px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    #BarraTexto {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        text-align: center;
+        color: white;
+        line-height: 20px;
+        text-shadow: 1px 1px 1px black;
+    }
+
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
       .content-section h1 {
@@ -155,6 +315,20 @@
       .footer a {
           display: block;
           margin: 5px 0;
+      }
+      .contato-form-container {
+        padding: 20px;
+      }
+      .contatocampos input,
+      .contatocampos select,
+      .contatocampos textarea,
+      .contatocampos span {
+        font-size: 16px;
+        line-height: 2rem;
+      }
+      .butenviar {
+        padding: 10px 20px;
+        font-size: 14px;
       }
     }
   </style>
@@ -171,10 +345,66 @@
 
   <!-- Seção Contato -->
   <div id="contact-section" class="content-section container">
-    <h1>Contato</h1>
-    <p>Se você tiver dúvidas, sugestões ou precisar de suporte, entre em contato conosco.</p>
-    <p>Você pode nos enviar um e-mail para: <a href="mailto:suporte@nfeviewer.com.br">suporte@nfeviewer.com.br</a></p>
-    <p>Agradecemos seu feedback e faremos o possível para responder o mais breve possível.</p>
+    <div class="contato-form-container">
+        <h1 id="texto1">CONTATO</h1>
+        <div id="texto2">Dúvidas, erro ou sugestão. Escreva aqui.</div>
+
+        <div id="divDados">
+            
+            <div class="contatocampos" id="divEmail">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><i class="img-cont img-cont-email"></i></td>
+                            <td>
+                                <input type="email" id="email" placeholder="Seu Email">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="contatocampos" id="divMotivo">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><i class="img-cont img-cont-tipo"></i></td>
+                            <td>
+                                <select id="motivo" onchange="MotivoSeleciona()" style="cursor: pointer">
+                                    <option>Motivo do Contato</option>
+                                    <option disabled=""></option>
+                                    <option>Dúvida</option>
+                                    <option>Erro</option>
+                                    <option>Sugestão</option>
+                                    <option>Outros</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="contatocampos" id="divArquivos" style="display: none">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><i class="img-cont img-cont-screen"></i></td>
+                            <td style="text-align: left">
+                                <input type="file" name="arquivo" id="arquivo" class="arquivo" multiple="multiple" data-multiple-caption="{count} imagens selecionadas" accept="image/*">
+                                <label for="arquivo" style="width: 100%; display: inline-block;"><span style="text-align: left">Enviar PrintScreen</span></label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="contatocampos" id="divDescricao">
+                <textarea id="descricao" cols="20" rows="5" placeholder="Escreva aqui"></textarea>
+            </div>
+            <div id="divBotao" style="text-align: right;">
+                <input class="butenviar" type="button" value="ENVIAR" onclick="Enviar();">
+            </div>
+        </div>
+    </div>
     <div class="text-center mt-4">
         <button class="btn btn-back-to-main" onclick="window.location.href='/'">Voltar</button>
     </div>
@@ -195,5 +425,197 @@
 
   <!-- Link para o Bootstrap JS (com Popper.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Função auxiliar para obter elementos por ID, como no seu código original
+    function ele(id) {
+        return document.getElementById(id);
+    }
+
+    // Funções de modal (stubs, pois a implementação completa não está no escopo do frontend)
+    // Você precisaria ter essas funções definidas globalmente ou incluí-las aqui
+    function MsgInf(message, callback) {
+        // Implementação de um modal de informação simples
+        alert(message); // Usando alert como fallback, idealmente seria um modal customizado
+        if (callback) callback();
+    }
+
+    function MsgQue(message, callbackYes, callbackNo) {
+        // Implementação de um modal de pergunta simples
+        if (confirm(message)) { // Usando confirm como fallback
+            if (callbackYes) callbackYes();
+        } else {
+            if (callbackNo) callbackNo();
+        }
+    }
+
+    function MsgB(content) {
+        // Implementação de um modal de barra de progresso ou mensagem de carregamento
+        // Para este exemplo, vamos usar o loader overlay existente ou criar um simples
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const loaderText = document.getElementById('loaderText');
+        if (loaderOverlay && loaderText) {
+            loaderText.innerHTML = content.replace(/<div[^>]*BarraTexto[^>]*>(.*?)<\/div>/, '$1'); // Extrai o texto
+            loaderOverlay.style.display = 'flex';
+        } else {
+            console.log("MsgB content:", content); // Fallback para console
+        }
+    }
+
+    function MsgF() {
+        // Função para fechar o modal ou loader
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        if (loaderOverlay) {
+            loaderOverlay.style.display = 'none';
+        }
+    }
+
+    // Lógica do formulário de contato
+    function MotivoSeleciona() {
+        if (ele('motivo').value == 'Erro') {
+            ele('descricao').placeholder = 'Descreva aqui com detalhes sobre o erro. É muito importante você enviar um printscreen da tela de quando acontece o erro.';
+            ele('divArquivos').style.display = 'block';
+        } else {
+            ele('descricao').placeholder = 'Escreva aqui';
+            ele('divArquivos').style.display = 'none';
+        }
+    }
+
+    async function Enviando() {
+        const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // Certifique-se que esta URL está correta para seu proxy
+
+        var fileInput = ele('arquivo');
+        var formData = new FormData();
+
+        for (var i = 0; i < fileInput.files.length; i++) {
+            formData.append('arquivo', fileInput.files[i]);
+        }
+        // Removidos 'formadeuso' e 'funcionalidade' do formData
+        formData.append('email', ele('email').value);
+        formData.append('pagina', document.referrer);
+        formData.append('motivo', ele('motivo').value);
+        formData.append('descricao', ele('descricao').value);
+
+        try {
+            // Exibir barra de progresso (simulada ou real se o servidor suportar)
+            ele('Barra').style.width = '0%';
+            ele('BarraTexto').innerHTML = '0% Completo.';
+
+            const response = await fetch(`${PROXY_BASE_URL}/send-contact-email`, {
+                method: 'POST',
+                body: formData
+            });
+
+            // Simular progresso para o frontend, já que fetch não tem onprogress para upload
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                if (progress <= 100) {
+                    ele('Barra').style.width = progress + '%';
+                    ele('BarraTexto').innerHTML = progress + '% Completo.';
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao enviar a mensagem.');
+            }
+
+            const result = await response.json();
+            clearInterval(interval); // Parar simulação de progresso
+            ele('Barra').style.width = '100%';
+            ele('BarraTexto').innerHTML = '100% Completo.';
+
+            if (result.status === 'OK') {
+                MsgF(); // Fecha o modal de progresso
+                ele('texto1').innerHTML = 'Mensagem enviada';
+                ele('texto2').innerHTML = 'A resposta será feita no e-mail informado.';
+                ele('divDados').style.display = 'none'; // Oculta o formulário
+            } else {
+                MsgInf(result.message || 'Ocorreu um erro ao enviar a mensagem.');
+            }
+
+        } catch (error) {
+            clearInterval(interval); // Parar simulação de progresso em caso de erro
+            MsgF(); // Fecha o modal de progresso
+            console.error("Erro ao enviar contato:", error);
+            MsgInf('Erro ao enviar a mensagem: ' + error.message);
+        }
+    }
+
+    function Enviar() {
+        // Limpa bordas de erro anteriores
+        // Removidos 'divFuncionalidade' e 'divFormaDeUso'
+        ele('divEmail').style.border = '0px none';
+        ele('divMotivo').style.border = '0px none';
+        ele('divDescricao').style.border = '0px none';
+
+        // Validações
+        // Removida validação de 'FormaDeUso'
+        if (ele('email').value.trim() == '') {
+            ele('divEmail').style.border = '2px solid red';
+            MsgInf('É necessário informar o seu e-mail', function () { ele('email').focus(); });
+            return;
+        }
+        if (ele('email').value.indexOf("@") == -1) {
+            ele('divEmail').style.border = '2px solid red';
+            MsgInf('É necessário informar um e-mail válido.', function () { ele('email').focus(); });
+            return;
+        }
+        if ((ele('motivo').value.trim() == 'Motivo do Contato')) {
+            ele('divMotivo').style.border = '2px solid red';
+            MsgInf('É necessário informar o motivo.', function () { ele('motivo').focus(); });
+            return;
+        }
+        // Removida validação de 'funcionalidade'
+        if (ele('descricao').value.trim() == '') {
+            ele('divDescricao').style.border = '2px solid red';
+            MsgInf('É necessário escrever sobre o seu contato', function () { ele('descricao').focus(); });
+            return;
+        }
+
+        // Confirmação e envio
+        MsgQue('Deseja realmente enviar ?',
+            function () {
+                MsgB('<div style="padding: 15px">' +
+                     '<div class="lab">Enviando mensagem...</div>' +
+                     '<div class="barra-fundo">' +
+                     '<div id="Barra" class="barra" style="width: 0%"></div>' +
+                     '<div id="BarraTexto" style="color: white; text-align: center; white-space:nowrap; position: relative; width: 100%; margin-top: -20px; text-shadow: 1px 1px 1px black">0 %</div>' +
+                     '</div></div>');
+                document.onkeydown = null; // Desabilita keydown enquanto envia
+                Enviando();
+            },
+            null
+        );
+    }
+
+    // Função FormaDeUsoSeleciona removida, pois os select boxes foram retirados
+    // function FormaDeUsoSeleciona() { ... }
+
+    // Lógica para o input de arquivo (label dinâmico)
+    document.addEventListener('DOMContentLoaded', function() {
+        var inputs = document.querySelectorAll('#arquivo');
+        Array.prototype.forEach.call(inputs, function (input) {
+            var label = input.nextElementSibling,
+                labelVal = label.innerHTML;
+
+            input.addEventListener('change', function (e) {
+                var fileName = '';
+                if (this.files && this.files.length > 1)
+                    fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+                else
+                    fileName = e.target.value.split('\\').pop();
+
+                if (fileName)
+                    label.querySelector('span').innerHTML = fileName;
+                else
+                    label.innerHTML = labelVal;
+            });
+        });
+    });
+  </script>
 </body>
 </html>
