@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termos de Uso - Visualizador de Nota Fiscal XML</title>
+  <!-- Link para o Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Estilos globais para o corpo da página e variáveis de cor */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa; /* Fundo cinza claro */
+      color: #333; /* Cor de texto padrão */
+      display: flex; /* Usar flexbox para o layout principal */
+      flex-direction: column; /* Conteúdo em coluna */
+      min-height: 100vh; /* Ocupa a altura total da viewport */
+    }
+
+    :root {
+      --primary-orange: #f26522; /* Laranja principal */
+      --primary-blue: #003366; /* Azul principal */
+    }
+
+    /* Estilos para títulos */
+    h1, h4, h5 {
+      font-weight: 600; /* Negrito */
+      color: var(--primary-blue); /* Cor azul */
+    }
+
+    /* Estilos para o cabeçalho do card */
+    .card-header {
+      background-color: var(--primary-orange); /* Fundo laranja */
+      color: white; /* Texto branco */
+      font-weight: 500;
+      border-bottom: 2px solid var(--primary-blue); /* Borda inferior azul */
+    }
+
+    /* Estilos para todos os cards */
+    .card {
+      border: 2px solid #adb5bd; /* Borda cinza mais escura */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+
+    /* Estilo para a sobreposição do loader (indicador de carregamento) */
+    .loader-overlay {
+      position: fixed; /* Fixado na tela */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+      z-index: 9999; /* Acima de tudo */
+      display: none; /* ESCONDIDO POR PADRÃO */
+      flex-direction: column; /* Conteúdo em coluna */
+      justify-content: center; /* Centraliza verticalmente */
+      align-items: center; /* Centraliza horizontalmente */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+    .loader {
+      border: 8px solid #f3f3f3; /* Borda cinza clara */
+      border-top: 8px solid var(--primary-orange); /* Borda superior laranja (para o spinner) */
+      border-radius: 50%; /* Faz um círculo */
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite; /* Animação de rotação */
+    }
+    .loader-text {
+      color: white; /* Texto branco */
+      margin-top: 10px; /* Espaço entre o spinner e o texto */
+      font-size: 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Estilos para as seções de conteúdo que são ocultáveis (agora páginas separadas) */
+    .content-section {
+      padding: 40px 20px;
+      flex-grow: 1; /* Permite que ocupe o espaço disponível */
+    }
+
+    .content-section h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .content-section p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    .content-section ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        margin-bottom: 15px;
+    }
+
+    .content-section ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Estilo para o botão de voltar */
+    .btn-back-to-main {
+        margin-top: 20px;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-back-to-main:hover {
+        background-color: #002244; /* Azul mais escuro no hover */
+    }
+
+    /* Estilos para o rodapé */
+    .footer {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: auto; /* Empurra o rodapé para o final da página */
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: text-decoration 0.3s ease;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Estilo para o logo na navbar */
+    .navbar-brand img {
+      height: 30px; /* Altura do logo */
+      margin-right: 10px; /* Espaçamento à direita do logo */
+      border-radius: 4px; /* Bordas arredondadas para o logo na navbar */
+      background-color: transparent; /* Fundo transparente para o logo */
+      padding: 0; /* Remove o preenchimento */
+    }
+
+    /* Responsividade para telas menores */
+    @media (max-width: 768px) {
+      .content-section h1 {
+        font-size: 1.5rem;
+      }
+      .footer a {
+          display: block;
+          margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        NF-e Viewer
+      </a>
+    </div>
+  </nav>
+
+  <!-- Seção Termos de Uso -->
+  <div id="terms-of-use-section" class="content-section container">
+    <h1>Termos de Uso</h1>
+    <p>Bem-vindo ao NF-e Viewer. Ao utilizar esta ferramenta, você concorda com os seguintes termos e condições:</p>
+    <h2>1. Uso da Ferramenta</h2>
+    <p>O NF-e Viewer é fornecido como um serviço gratuito para visualização de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Você é responsável pelo uso dos arquivos que carrega e pela conformidade com as leis e regulamentos aplicáveis.</p>
+    <h2>2. Processamento de Dados</h2>
+    <p>Todo o processamento dos arquivos XML ocorre no seu navegador. O NF-e Viewer não coleta, armazena ou transmite seus dados de NF-e para nossos servidores. Sua privacidade é garantida pelo processamento local.</p>
+    <h2>3. Isenção de Garantias</h2>
+    <p>A ferramenta é fornecida "como está", sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que a ferramenta será ininterrupta, livre de erros ou que os resultados obtidos com seu uso serão precisos ou confiáveis.</p>
+    <h2>4. Limitação de Responsabilidade</h2>
+    <p>Em nenhuma circunstância o NF-e Viewer ou seus criadores serão responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais ou consequenciais decorrentes do uso ou da incapacidade de usar a ferramenta.</p>
+    <h2>5. Alterações nos Termos</h2>
+    <p>Reservamo-nos o direito de modificar estes Termos de Uso a qualquer momento. O uso continuado da ferramenta após a publicação de alterações constitui sua aceitação dos termos revisados.</p>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main" onclick="window.location.href='index.html'">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Rodapé da Página -->
+  <footer class="footer">
+    <div>
+      © 2025 NF-e Viewer. Todos os direitos reservados.
+    </div>
+    <div class="mt-2">
+      <a href="about.html">Sobre</a> |
+      <a href="privacy-policy.html">Política de Privacidade</a> |
+      <a href="terms-of-use.html">Termos de Uso</a> |
+      <a href="contact.html">Contato</a>
+    </div>
+  </footer>
+
+  <!-- Link para o Bootstrap JS (com Popper.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
