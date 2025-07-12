@@ -112,10 +112,10 @@
     .custom-file-input-wrapper {
         position: relative;
         display: flex;
-        flex-direction: column; /* Empilhar label e nome do arquivo */
-        align-items: flex-start; /* Alinhar texto ao início */
+        /* flex-direction: column; Removido para alinhar horizontalmente */
+        align-items: center; /* Alinhar itens verticalmente no centro */
         width: 100%;
-        max-width: 300px; /* Ajustar largura conforme necessário */
+        max-width: 350px; /* Aumentado o tamanho da barra */
     }
 
     .custom-label-file-select {
@@ -124,13 +124,14 @@
         background-color: #ebeff1; /* Fundo cinza claro para a barra */
         color: #a9a9a9; /* Cor de texto cinza para a mensagem padrão */
         padding: 9px 15px; /* Ajustar preenchimento para parecer uma barra */
+        border: 1px solid #ced4da; /* Contorno discreto */
         border-radius: 8px;
         text-align: left; /* Alinhar texto à esquerda */
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
         font-weight: 500; /* Um pouco menos negrito que um botão */
         box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* Sombra mais suave */
-        width: 100%; /* Fazer com que preencha seu contêiner */
+        flex-grow: 1; /* Faz a barra ocupar o espaço disponível */
         min-height: 44px; /* Garantir uma altura mínima para a barra */
     }
 
@@ -159,6 +160,8 @@
         font-weight: 600;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         min-width: 130px; /* Garantir que o botão tenha uma largura mínima */
+        margin-left: -1px; /* Encosta a barra no botão */
+        z-index: 1; /* Garante que o botão fique sobreposto à borda da barra */
     }
 
     .custom-read-xml-btn:hover {
@@ -407,7 +410,7 @@
 
     /* Responsividade para o novo layout de seleção/leitura de arquivo */
     @media (max-width: 576px) {
-        .d-flex.justify-content-center.align-items-center.mb-4 {
+        .d-flex.flex-column.flex-md-row.justify-content-center.align-items-center.mb-4 {
             flex-direction: column; /* Empilhar elementos verticalmente */
         }
         .custom-file-input-wrapper {
@@ -418,6 +421,7 @@
         .custom-read-xml-btn {
             width: 100%; /* Largura total quando empilhado */
             max-width: 300px;
+            margin-left: 0; /* Remover margin-left para empilhamento */
         }
     }
   </style>
@@ -460,7 +464,7 @@
 
     <!-- Novo layout de seleção/leitura de arquivo -->
     <div class="d-flex flex-column flex-md-row justify-content-center align-items-center mb-4">
-        <div class="custom-file-input-wrapper me-md-3 mb-3 mb-md-0">
+        <div class="custom-file-input-wrapper me-md-0 mb-3 mb-md-0"> <!-- Removido me-md-3 e ajustado mb-3 -->
             <label for="fileInput" class="custom-label-file-select">
                 <span id="fileNameDisplay" class="file-name-display">Clique aqui e Escolha Seus XMLs NFe ou CTe</span>
             </label>
