@@ -80,6 +80,7 @@
     .content-section {
       padding: 40px 20px;
       flex-grow: 1; /* Permite que ocupe o espaço disponível */
+      text-align: center; /* Centraliza o conteúdo da seção */
     }
 
     .content-section h1 {
@@ -89,13 +90,19 @@
 
     .content-section p {
       margin-bottom: 15px;
-      text-align: justify;
+      text-align: justify; /* Justifica o texto para melhor leitura */
+      max-width: 800px; /* Limita a largura do parágrafo */
+      margin-left: auto; /* Centraliza o parágrafo */
+      margin-right: auto; /* Centraliza o parágrafo */
     }
 
     .content-section ul {
         list-style-type: disc;
-        margin-left: 20px;
-        margin-bottom: 15px;
+        margin-left: auto; /* Centraliza a lista */
+        margin-right: auto; /* Centraliza a lista */
+        max-width: 800px; /* Limita a largura da lista */
+        padding-left: 40px; /* Ajusta o padding para a lista */
+        text-align: justify; /* Justifica o texto da lista */
     }
 
     .content-section ul li {
@@ -147,6 +154,14 @@
       padding: 0; /* Remove o preenchimento */
     }
 
+    /* Estilo para o logo na página "Sobre" */
+    .about-logo {
+      max-width: 150px; /* Tamanho do logo */
+      height: auto;
+      margin-bottom: 20px; /* Espaçamento abaixo do logo */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
       .content-section h1 {
@@ -171,10 +186,11 @@
 
   <!-- Seção Sobre -->
   <div id="about-section" class="content-section container">
+    <img src="https://placehold.co/150x150/003366/FFFFFF?text=Logo" alt="Logo NF-e Viewer" class="about-logo">
     <h1>Sobre o NF-e Viewer</h1>
-    <p>O NF-e Viewer é uma ferramenta online gratuita desenvolvida para simplificar a visualização e análise de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Nosso objetivo é proporcionar uma maneira rápida e eficiente para que empresas e indivíduos possam inspecionar o conteúdo de suas NF-e sem a necessidade de softwares complexos ou conhecimentos técnicos aprofundados.</p>
-    <p>Com uma interface intuitiva, você pode carregar seu arquivo XML e ter acesso imediato aos detalhes da nota, como informações do emitente, destinatário, produtos/serviços, valores e muito mais. Acreditamos que a transparência e o acesso fácil à informação fiscal são cruciais para a gestão eficiente.</p>
-    <p>Estamos constantemente trabalhando para melhorar e expandir as funcionalidades do NF-e Viewer, sempre com foco na usabilidade e na segurança dos dados.</p>
+    <p>O NF-e Viewer é uma ferramenta online gratuita desenvolvida para simplificar a visualização e análise de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Com uma interface intuitiva, você pode carregar seu arquivo XML e ter acesso imediato aos detalhes da nota, como informações do emitente, destinatário, produtos/serviços, valores e muito mais.</p>
+    <p>Além de ler as informações dos XMLs de NF-e, esta ferramenta também permite a geração do DANFE (Documento Auxiliar da Nota Fiscal Eletrônica) para impressão ou visualização rápida. Tenha controle e clareza sobre suas notas fiscais em segundos.</p>
+    <p>Esta é uma ferramenta em desenvolvimento por <strong>Willian Soares</strong>, que busca aperfeiçoá-la continuamente para oferecer a melhor experiência e funcionalidade aos usuários. Acreditamos que a transparência e o acesso fácil à informação fiscal são cruciais para a gestão eficiente.</p>
     <div class="text-center mt-4">
         <button class="btn btn-back-to-main" onclick="window.location.href='/'">Voltar</button>
     </div>
