@@ -247,36 +247,16 @@
         vertical-align: middle;
     }
 
+    /* Estilos para a primeira célula da tabela (onde os ícones ficavam) */
     .contatocampos table td:first-child {
-        width: 50px; /* Largura para o ícone */
-        padding: 15px; /* Padding para o ícone */
-        text-align: center;
+        /* Removido: width: 50px; */ /* Largura não necessária se não há ícone */
+        padding: 15px; /* Mantém o padding para espaçamento */
+        /* Removido: display: flex; */
+        /* Removido: align-items: center; */
+        /* Removido: justify-content: center; */
     }
 
-    /* Estilos para os ícones */
-    .img-cont {
-        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEoAAABKCAYAAAAc0MJxAAAISUlEQVR4Xu2cTVIbRxSA3xsV2PLG+ARWTmB8AuMTAEs0pIBlLKUMJ7A4AVBByRJcQfIS+QSWThD5BCEnMGxMPELzUm+6W2oNM9PdM4KCymiVFG/65+v3192vjVD+rAiglVQpBCUoSyUoQZWgLAlYipUaddegDk7OlxYWrlcRsUZEK6o/ROwT0cVoVP28t7N+aTmOBy/mrFF/fPpUC8PwAwBum2dHp57n7f+ysXFhln3YEk6g2p3uIQC8d50SERw2N+t7rt89JHkrUNLMzhFhYmKukyCC/mhUXS9ijr93u2th6L5QtmP1PDh6V6/3kuStQLU73T4AvLHtME2OYTU362/ztHN81n1FhIM837p8QwR7zc06W87MzwjK3txop+H7p+1OZxkAGezzlAEeNfz6rsvgWfb4rDtEhFeu37nL07Dh+6+dQAnHTX9bdDZo+PWJWZrgeh7+5Org250uEdA/C/iUsQgWQ00VuSKgSwR82fDrtxQoU6OOz7qniLBl0ftFEFRfK/9jWn0i+NjcrFtEzWnPDEr8H50C4FWeoJI+D9onwpqaqxModuCLi9ffLCApkQsi6CFyToXLpu+CoPrCxbFPQUWwhgCwQ4Tst2wWMnE4vGCIxP7oRB+zE6h2p7MNgCemCef/u/Bptt/PggIgoksib93zwksA5Mm6BJsBAO2GobeEGJ4jRuY8+bmCagHgh6yJ8Ip4HvQ4pLI/G4+pZb/CtN/w/VZeUNPvaLfh+0e//flpxfOI28sCNghDbP3680Y/K4o6gspOCXhFEb1DgPCSB6oGftzpXLBDNAOgzw3fXzPLCYm4RsW+6wVBdYdNmS2BAFr6GEQQgBZrsHQpbCmpfc8VVJqqOuRcM5HSBMwAiv3WjIZOgQlAqv12p2O0lDsBxavV9P3adCAqOpmmPj+NIoKvzc36stCW71u6hk80/ay7OxpVT1nrTFHZEZSZfBR/tFAv/cQXEyLx9/n4KIY0GlVXnjy5XglDOhGOWUTFhu8PRQIsohq7C8/DnR8/qv2Fhet+WgLrCsoq6iHCutofmRLNWYDFop5cpK+VCq6Nx/QeEW5l+7xlStqf8ia9UsGj8Zh6SbCcQNnmUXo+ZFJpHVSxPCrS5K+cR3leeGCTt93WchqGobfHeVQclhMobtiUmSvf4OqfimXmAhIi9Uzpi50LwBYRreuwnEGZ9nps881N/4UeUXgrAEgrWSlC3r1eZG4i1H/Lp0Vp6GhIAC/UmJ1ByfzFcFhHp0HwbE/mMMtEuJXkL7QhPujTg7iVqHEbj1kkrLmcRwG4pQT6+t/XeRRAcpCxAiUdO5/8ueynYnpOn4PgbbbLRjhuKHzCSXQ7utn5IrMUIhwWOuHUnHWuM3MAyGVu5qndn4SVRunDcdn8cnSrVLDlekh3f9O378kZlGpabhd4Y1kDQO3SgdifXQTBs14RM7Ofwv1I5gZ1P8N7OL2UoCzXogRVgrIkYClWalQJypKApVipUSUoSwKWYqVGlaAsCViKlRr1fwQlb1z4KIgPECdXaIjEpZF8MzPgmxlLNjNij16jxOb83/dE4W68hiAJiLrhDoKnRy6b9kcNKroNJjjQAF0BRKcXQ0Qcjsd4WanQEhHx3R4XuPEpR1TgJoDBnm2hiBGUuNSENw1/Y19cNsBWGMKACx1ExQsAd6bkPA8+8vkTX12HodefynkvuY08ap/0jX5DJG9lDm0mLeBG5UKyeo9OG76/YxqXEZS6q+ebielNsLjllXUGwNV2Si4M8a2Aw1frM3Jvkm43TAO0gJRYc2lqd/YM3gzLCMrU4X3/XbuNZjNbyeucedyxetPM42ojKDY3Inr5rl4f5IXCA0LE50Xa0Cb2F/+3fpWfd1yyTa10gF6ngTeC0k0v74BUKVBR01Pt5Llpzhq78ndZ5d1GUMIvhazi1tVx8UFJp18r0oZ+a+1at2BaYL3OIu0W2wjK1Ml9/X3qfPNfomaNtd3pcC3DaoGC/CicbuV9cSD8QPeQCF4VaWOaDrjVVdkupHIxaWZt1ChZHbytF9zrncvIETnYhF8USWSkWk5rw2Yyyj+p9MPmGxcZeQt9LrY508cFqg0jKL0ztuUnT65nnlkQAddH8r5qJioSUE1UhxBvLSb7KyK6yhPS7xqUVi2YD5SemaeVHibZtXS+DCj+JsapyFUtlPIhriWNtlo1D9OLqmj1zJztmAgnlbZym7IM4K0SERe3D5ub9Y8M6+Ym0rbo53nE9Z25QClnPu/UwHYhjKanJssw4lsY1Ylm39oC3t4WyBLoXKAeVXqQBqrd6UZvh8MQ125ung4XF7/zw57VuOMtAkpGT1mnNd/Ip7ZFaUVk3LdRo7I2xdzAdKWng88Ayi+kcmmUABW9BZQRNn27YeuX4m1mRVQjKD0zNwDoNfz6uuxc7p9mq9eKapRsO/KZ8jzpbZ4IqvmlZSL4wudZJt9nBKWvTgYoWWDGhfDIx65cDnQVBNWafoo4D1A8nunebLbY1kWTxPtkUcCvivqzTjznAkrulXgvqF6wR8+84qs9L1BqweLPS2xA8beI9EEr1B8EQXXNdCw8F1A2A5TOuJCPiofyJHNhEJUKydei4ouQUxZCBhR7dGkfFHKCskWTKJfbmetmJ/Ky6dtkWQHIrxiMT3DzlEw6gZJR59ZTd0dswzyv1G+/sxOBIuEWht8bD4lgSZ6Lq60Vv3Lv84Mhk5klzccJlCOQuYrPPkjiB9h8T4cr/O/CaLcwA8/D7bsorn1MoDipTfu3FCZPYOe6OlpjjwaU3Otx2sE3wZE5yVfx/SK5lC3YRwPKdkJ3JVeCsiRbgipBWRKwFCs1yhLUf9edLpadORCyAAAAAElFTkSuQmCC);
-        background-repeat: no-repeat;
-        display: block;
-        width: 27px; /* Tamanho fixo para os ícones */
-        height: 27px; /* Tamanho fixo para os ícones */
-    }
-
-    .img-cont-chave {
-        background-position: -5px -5px;
-    }
-
-    .img-cont-email {
-        background-position: -42px -5px;
-    }
-
-    .img-cont-screen {
-        background-position: -5px -42px;
-    }
-
-    .img-cont-tipo {
-        background-position: -42px -42px;
-    }
+    /* Removidos todos os estilos para .img-cont e suas variações */
 
     /* Estilos para a barra de progresso de upload */
     .barra-fundo {
@@ -355,7 +335,7 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td><i class="img-cont img-cont-email"></i></td>
+                            <td><!-- Ícone de e-mail removido --></td>
                             <td>
                                 <input type="email" id="email" placeholder="Seu Email">
                             </td>
@@ -368,7 +348,7 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td><i class="img-cont img-cont-tipo"></i></td>
+                            <td><!-- Ícone de tipo removido --></td>
                             <td>
                                 <select id="motivo" onchange="MotivoSeleciona()" style="cursor: pointer">
                                     <option>Motivo do Contato</option>
@@ -388,7 +368,7 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td><i class="img-cont img-cont-screen"></i></td>
+                            <td><!-- Ícone de printscreen removido --></td>
                             <td style="text-align: left">
                                 <input type="file" name="arquivo" id="arquivo" class="arquivo" multiple="multiple" data-multiple-caption="{count} imagens selecionadas" accept="image/*">
                                 <label for="arquivo" style="width: 100%; display: inline-block;"><span style="text-align: left">Enviar PrintScreen</span></label>
@@ -489,7 +469,6 @@
         for (var i = 0; i < fileInput.files.length; i++) {
             formData.append('arquivo', fileInput.files[i]);
         }
-        // Removidos 'formadeuso' e 'funcionalidade' do formData
         formData.append('email', ele('email').value);
         formData.append('pagina', document.referrer);
         formData.append('motivo', ele('motivo').value);
@@ -547,13 +526,11 @@
 
     function Enviar() {
         // Limpa bordas de erro anteriores
-        // Removidos 'divFuncionalidade' e 'divFormaDeUso'
         ele('divEmail').style.border = '0px none';
         ele('divMotivo').style.border = '0px none';
         ele('divDescricao').style.border = '0px none';
 
         // Validações
-        // Removida validação de 'FormaDeUso'
         if (ele('email').value.trim() == '') {
             ele('divEmail').style.border = '2px solid red';
             MsgInf('É necessário informar o seu e-mail', function () { ele('email').focus(); });
@@ -569,7 +546,6 @@
             MsgInf('É necessário informar o motivo.', function () { ele('motivo').focus(); });
             return;
         }
-        // Removida validação de 'funcionalidade'
         if (ele('descricao').value.trim() == '') {
             ele('divDescricao').style.border = '2px solid red';
             MsgInf('É necessário escrever sobre o seu contato', function () { ele('descricao').focus(); });
@@ -591,9 +567,6 @@
             null
         );
     }
-
-    // Função FormaDeUsoSeleciona removida, pois os select boxes foram retirados
-    // function FormaDeUsoSeleciona() { ... }
 
     // Lógica para o input de arquivo (label dinâmico)
     document.addEventListener('DOMContentLoaded', function() {
