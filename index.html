@@ -240,7 +240,7 @@
       position: fixed; /* Fixado na tela */
       top: 0;
       left: 0;
-      width: 100%; /* Largura total */
+      width: 100%;
       height: 100%; /* Altura total */
       overflow: auto; /* Permite rolagem se o conteúdo for grande */
       background-color: rgba(0,0,0,0.4); /* Fundo semi-transparente */
@@ -283,33 +283,6 @@
 
     .error-modal-close-btn:hover {
       background-color: #002244; /* Azul mais escuro no hover */
-    }
-
-    /* Estilos para as novas seções de conteúdo que são ocultáveis */
-    .content-section {
-      display: none; /* Escondido por padrão */
-      padding: 40px 20px;
-      flex-grow: 1; /* Permite que ocupe o espaço disponível */
-    }
-
-    .content-section h1 {
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .content-section p {
-      margin-bottom: 15px;
-      text-align: justify;
-    }
-
-    .content-section ul {
-        list-style-type: disc;
-        margin-left: 20px;
-        margin-bottom: 15px;
-    }
-
-    .content-section ul li {
-        margin-bottom: 8px;
     }
 
     /* Estilos para a seção de conteúdo principal (agora dentro de upload-section) */
@@ -472,7 +445,7 @@
     <div class="upload-controls-container d-flex flex-column flex-md-row justify-content-center align-items-center mb-4">
         <div class="custom-file-input-wrapper me-md-0 mb-3 mb-md-0">
             <label for="fileInput" class="custom-label-file-select">
-                <span id="fileNameDisplay" class="file-name-display">Clique aqui e Escolha Seu XML NFe</span>
+                <span id="fileNameDisplay" class="file-name-display">Clique aqui e Escolha Seus XMLs NFe ou CTe</span>
             </label>
             <input type="file" id="fileInput" accept=".xml" style="display: none;">
         </div>
@@ -546,81 +519,16 @@
     </div>
   </div>
 
-  <!-- Novas Seções de Conteúdo (ocultas por padrão) -->
-
-  <!-- Seção Sobre -->
-  <div id="about-section" class="content-section container">
-    <h1>Sobre o NF-e Viewer</h1>
-    <p>O NF-e Viewer é uma ferramenta online gratuita desenvolvida para simplificar a visualização e análise de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Nosso objetivo é proporcionar uma maneira rápida e eficiente para que empresas e indivíduos possam inspecionar o conteúdo de suas NF-e sem a necessidade de softwares complexos ou conhecimentos técnicos aprofundados.</p>
-    <p>Com uma interface intuitiva, você pode carregar seu arquivo XML e ter acesso imediato aos detalhes da nota, como informações do emitente, destinatário, produtos/serviços, valores e muito mais. Acreditamos que a transparência e o acesso fácil à informação fiscal são cruciais para a gestão eficiente.</p>
-    <p>Estamos constantemente trabalhando para melhorar e expandir as funcionalidades do NF-e Viewer, sempre com foco na usabilidade e na segurança dos dados.</p>
-    <div class="text-center mt-4">
-        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
-    </div>
-  </div>
-
-  <!-- Seção Política de Privacidade -->
-  <div id="privacy-policy-section" class="content-section container">
-    <h1>Política de Privacidade</h1>
-    <p>A sua privacidade é de extrema importância para nós. Esta Política de Privacidade descreve como o NF-e Viewer coleta, usa e protege suas informações.</p>
-    <h2>Coleta de Dados</h2>
-    <p>O NF-e Viewer é uma aplicação que funciona <strong>inteiramente no seu navegador</strong>. Isso significa que:</p>
-    <ul>
-        <li><strong>Não coletamos, armazenamos ou transmitimos seus arquivos XML de NF-e.</strong> Todo o processamento dos dados do XML ocorre localmente no seu dispositivo.</li>
-        <li>Não solicitamos nem armazenamos informações pessoais identificáveis, como nome, e-mail, CPF/CNPJ ou dados bancários.</li>
-        <li>Não utilizamos cookies para rastreamento de usuários ou para coletar informações sobre sua navegação.</li>
-    </ul>
-    <h2>Uso de Dados</h2>
-    <p>As informações contidas nos arquivos XML que você carrega são utilizadas exclusivamente para a visualização e análise dentro do seu navegador. Uma vez que você fecha a página ou carrega um novo arquivo, os dados do XML anterior são descartados da memória.</p>
-    <h2>Segurança</h2>
-    <p>Implementamos medidas de segurança para proteger a integridade de nossa aplicação, mas é importante ressaltar que a segurança dos dados do XML depende do seu próprio dispositivo, já que o processamento é local.</p>
-    <h2>Alterações na Política de Privacidade</h2>
-    <p>Podemos atualizar nossa Política de Privacidade periodicamente. Recomendamos que você revise esta página para quaisquer alterações. As alterações são efetivas quando publicadas nesta página.</p>
-    <div class="text-center mt-4">
-        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
-    </div>
-  </div>
-
-  <!-- Seção Termos de Uso -->
-  <div id="terms-of-use-section" class="content-section container">
-    <h1>Termos de Uso</h1>
-    <p>Bem-vindo ao NF-e Viewer. Ao utilizar esta ferramenta, você concorda com os seguintes termos e condições:</p>
-    <h2>1. Uso da Ferramenta</h2>
-    <p>O NF-e Viewer é fornecido como um serviço gratuito para visualização de arquivos XML de Notas Fiscais Eletrônicas (NF-e). Você é responsável pelo uso dos arquivos que carrega e pela conformidade com as leis e regulamentos aplicáveis.</p>
-    <h2>2. Processamento de Dados</h2>
-    <p>Todo o processamento dos arquivos XML ocorre no seu navegador. O NF-e Viewer não coleta, armazena ou transmite seus dados de NF-e para nossos servidores. Sua privacidade é garantida pelo processamento local.</p>
-    <h2>3. Isenção de Garantias</h2>
-    <p>A ferramenta é fornecida "como está", sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que a ferramenta será ininterrupta, livre de erros ou que os resultados obtidos com seu uso serão precisos ou confiáveis.</p>
-    <h2>4. Limitação de Responsabilidade</h2>
-    <p>Em nenhuma circunstância o NF-e Viewer ou seus criadores serão responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais ou consequenciais decorrentes do uso ou da incapacidade de usar a ferramenta.</p>
-    <h2>5. Alterações nos Termos</h2>
-    <p>Reservamo-nos o direito de modificar estes Termos de Uso a qualquer momento. O uso continuado da ferramenta após a publicação de alterações constitui sua aceitação dos termos revisados.</p>
-    <div class="text-center mt-4">
-        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
-    </div>
-  </div>
-
-  <!-- Seção Contato -->
-  <div id="contact-section" class="content-section container">
-    <h1>Contato</h1>
-    <p>Se você tiver dúvidas, sugestões ou precisar de suporte, entre em contato conosco.</p>
-    <p>Você pode nos enviar um e-mail para: <a href="mailto:suporte@nfeviewer.com.br">suporte@nfeviewer.com.br</a></p>
-    <p>Agradecemos seu feedback e faremos o possível para responder o mais breve possível.</p>
-    <div class="text-center mt-4">
-        <button class="btn btn-back-to-main btn-back-to-upload">Voltar</button>
-    </div>
-  </div>
-
   <!-- Rodapé da Página -->
   <footer class="footer">
     <div>
       © 2025 NF-e Viewer. Todos os direitos reservados.
     </div>
     <div class="mt-2">
-      <a href="#" id="link-about">Sobre</a> |
-      <a href="#" id="link-privacy">Política de Privacidade</a> |
-      <a href="#" id="link-terms">Termos de Uso</a> |
-      <a href="#" id="link-contact">Contato</a>
+      <a href="about.html" id="link-about">Sobre</a> |
+      <a href="privacy-policy.html" id="link-privacy">Política de Privacidade</a> |
+      <a href="terms-of-use.html" id="link-terms">Termos de Uso</a> |
+      <a href="contact.html" id="link-contact">Contato</a>
     </div>
   </footer>
 
@@ -630,101 +538,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Nosso script principal -->
   <script src="main.js"></script>
-  <script>
-    // Este script deve ser integrado ao seu 'main.js' para melhor organização.
-    // Ele gerencia a visibilidade das diferentes seções da página.
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const uploadSection = document.getElementById('upload-section');
-        const viewerSection = document.getElementById('viewer-section');
-        const aboutSection = document.getElementById('about-section');
-        const privacySection = document.getElementById('privacy-policy-section');
-        const termsSection = document.getElementById('terms-of-use-section');
-        const contactSection = document.getElementById('contact-section');
-        // mainInfoContent e toolDescriptionCard agora estão dentro de uploadSection,
-        // então não precisam ser gerenciados separadamente aqui, pois sua visibilidade
-        // será controlada pela visibilidade de uploadSection.
-
-        const fileInput = document.getElementById('fileInput');
-        const backToUploadBtn = document.getElementById('backToUploadBtn');
-        // A constante generateDanfeBtn e seu event listener foram removidos
-        const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
-
-        const linkAbout = document.getElementById('link-about');
-        const linkPrivacy = document.getElementById('link-privacy');
-        const linkTerms = document.getElementById('link-terms');
-        const linkContact = document.getElementById('link-contact');
-
-        // Função para mostrar uma seção e esconder as outras
-        function showSection(sectionToShow) {
-            const allSections = [uploadSection, viewerSection, aboutSection, privacySection, termsSection, contactSection];
-
-            allSections.forEach(section => {
-                if (section) {
-                    section.style.display = 'none';
-                }
-            });
-
-            if (sectionToShow) {
-                if (sectionToShow === uploadSection || sectionToShow === aboutSection || sectionToShow === privacySection || sectionToShow === termsSection || sectionToShow === contactSection) {
-                    sectionToShow.style.display = 'flex';
-                } else if (sectionToShow === viewerSection) {
-                    sectionToShow.style.display = 'block';
-                }
-            }
-        }
-
-        // Event listener para o input de arquivo
-        if (fileInput) {
-            fileInput.addEventListener('change', (event) => {
-                if (event.target.files.length > 0) {
-                    console.log('Arquivo selecionado:', event.target.files[0].name);
-                    // Em um cenário real, você processaria o XML aqui e preencheria o visualizador.
-
-                    // showSection(viewerSection); // Removido: A exibição da seção do visualizador agora é feita pelo botão "Ler XML"
-                }
-            });
-        }
-
-        // Event listeners para os links do rodapé
-        linkAbout.addEventListener('click', (e) => {
-            e.preventDefault();
-            showSection(aboutSection);
-        });
-
-        linkPrivacy.addEventListener('click', (e) => {
-            e.preventDefault();
-            showSection(privacySection);
-        });
-
-        linkTerms.addEventListener('click', (e) => {
-            e.preventDefault();
-            showSection(termsSection);
-        });
-
-        linkContact.addEventListener('click', (e) => {
-            e.preventDefault();
-            showSection(contactSection);
-        });
-
-        // Event listener para o botão "Voltar para Carregar XML" na seção do visualizador
-        if (backToUploadBtn) {
-            backToUploadBtn.addEventListener('click', () => {
-                showSection(uploadSection);
-            });
-        }
-
-        // Event listeners para os botões "Voltar" nas novas seções de conteúdo
-        backToMainButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                showSection(uploadSection); // Volta para a seção de upload principal
-            });
-        });
-
-        // Garante que a seção de upload (e, portanto, as curiosidades e o novo quadro)
-        // esteja visível por padrão ao carregar a página.
-        showSection(uploadSection);
-    });
-  </script>
 </body>
 </html>
