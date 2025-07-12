@@ -356,73 +356,12 @@
       padding: 0; /* Remove o preenchimento */
     }
 
-    /* Estilos para a nova estrutura de upload de arquivo */
-    .TabArq {
-        width: 100%;
-        max-width: 400px;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-
-    .TabArq td {
-        border: 1px solid #ced4da; /* Borda cinza clara */
-        padding: 0; /* Remove padding padrão da célula */
-    }
-
-    .TabArq td:first-child {
-        background-color: #e9ecef; /* Fundo cinza mais claro */
-        color: #495057; /* Cor de texto para o nome do arquivo */
-        font-size: 16px;
-        border-radius: 8px 0 0 8px;
-        vertical-align: middle; /* Alinha o conteúdo verticalmente */
-    }
-
-    .TabArq td:last-child {
-        width: 130px;
-        border-left: none;
-        border-radius: 0 8px 8px 0;
-    }
-
-    .TabArq .arquivo {
-        display: none; /* Oculta o input de arquivo nativo */
-    }
-
-    .TabArq #arquivolab {
-        width: 100%;
-        display: inline-block;
-        cursor: pointer;
-        padding: 9px 15px;
-        text-align: left;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
-        line-height: normal; /* Garante que o texto não tenha altura extra */
-    }
-
-    .TabArq #lerXmlBtn {
-        width: 100%;
-        height: 100%;
-        background-color: var(--primary-orange);
-        border: none;
-        border-radius: 0 8px 8px 0;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        padding: 9px 15px; /* Ajusta o padding para o botão */
-    }
-
-    .TabArq #lerXmlBtn:hover {
-        background-color: #e05b1e; /* Laranja mais escuro no hover */
-    }
-
-
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
       #upload-section h1 {
         font-size: 1.5rem;
       }
-      .custom-label { /* Este estilo não será mais usado para o input de arquivo */
+      .custom-label {
         padding: 10px 15px;
         font-size: 0.9rem;
       }
@@ -435,12 +374,6 @@
       .footer a {
           display: block;
           margin: 5px 0;
-      }
-      .TabArq {
-          max-width: 100%; /* Ocupa a largura total em telas pequenas */
-      }
-      .TabArq td:last-child {
-          width: auto; /* Ajusta a largura do botão em telas pequenas */
       }
     }
   </style>
@@ -481,22 +414,10 @@
       </div>
     </section>
 
-    <!-- Nova estrutura para o input de arquivo e botão de leitura -->
-    <table class="TabArq">
-        <tbody>
-            <tr>
-                <td>
-                    <input type="file" id="arquivo" class="arquivo" multiple="multiple" accept=".xml">
-                    <div>
-                        <label id="arquivolab" for="arquivo">Nenhum arquivo selecionado</label>
-                    </div>
-                </td>
-                <td>
-                    <button id="lerXmlBtn">LER XML</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="custom-file">
+      <label for="fileInput" class="custom-label">Selecionar arquivo XML</label>
+      <input type="file" id="fileInput" accept=".xml">
+    </div>
 
     <!-- Novo Quadro: O que a ferramenta faz -->
     <div id="tool-description-card" class="card">
@@ -518,6 +439,7 @@
 
       <h2>E o DANFE?</h2>
       <p>O DANFE (Documento Auxiliar da Nota Fiscal Eletrônica) é uma representação gráfica simplificada do XML da NF-e. Ele não é a nota fiscal em si, mas um documento auxiliar que acompanha a mercadoria em trânsito e contém as informações essenciais da NF-e, como chave de acesso, dados do emitente e destinatário, descrição dos produtos e valores totais.</p>
+      <p>O DANFE serve para:</p>
       <ul>
           <li>Acompanhar o transporte da mercadoria.</li>
           <li>Permitir a consulta da NF-e original no site da Secretaria da Fazenda (SEFAZ) através da chave de acesso.</li>
@@ -659,22 +581,19 @@
         const privacySection = document.getElementById('privacy-policy-section');
         const termsSection = document.getElementById('terms-of-use-section');
         const contactSection = document.getElementById('contact-section');
+        // mainInfoContent e toolDescriptionCard agora estão dentro de uploadSection,
+        // então não precisam ser gerenciados separadamente aqui, pois sua visibilidade
+        // será controlada pela visibilidade de uploadSection.
 
-        const arquivoInput = document.getElementById('arquivo');
-        const arquivolab = document.getElementById('arquivolab');
-        const lerXmlBtn = document.getElementById('lerXmlBtn');
+        const fileInput = document.getElementById('fileInput');
         const backToUploadBtn = document.getElementById('backToUploadBtn');
+        // A constante generateDanfeBtn e seu event listener foram removidos
         const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
 
         const linkAbout = document.getElementById('link-about');
         const linkPrivacy = document.getElementById('link-privacy');
         const linkTerms = document.getElementById('link-terms');
         const linkContact = document.getElementById('link-contact');
-
-        // Referências para os elementos do visualizador
-        const headerDiv = document.getElementById('header');
-        const productListUl = document.getElementById('productList');
-        const productDetailsDiv = document.getElementById('productDetails');
 
         // Função para mostrar uma seção e esconder as outras
         function showSection(sectionToShow) {
@@ -695,99 +614,17 @@
             }
         }
 
-        // Função mock para simular o carregamento e exibição dos dados do XML
-        function parseAndDisplayXml(file) {
-            // Simula a leitura do arquivo XML (em um cenário real, você usaria DOMParser)
-            console.log(`Simulando a leitura do arquivo XML: ${file.name}`);
-
-            // Limpa o conteúdo anterior
-            headerDiv.innerHTML = '';
-            productListUl.innerHTML = '';
-            productDetailsDiv.innerHTML = '<p class="text-center">Selecione um produto para ver os detalhes.</p>';
-
-            // Simula dados do cabeçalho da NF-e
-            headerDiv.innerHTML = `
-                <h4>NF-e: 123456789 - Série 1</h4>
-                <p><strong>Emitente:</strong> Empresa Exemplo Ltda. - CNPJ: 00.000.000/0001-00</p>
-                <p><strong>Destinatário:</strong> Cliente Teste S.A. - CNPJ: 11.111.111/0001-11</p>
-                <p><strong>Data de Emissão:</strong> 01/01/2025</p>
-                <p><strong>Valor Total:</strong> R$ 1.234,56</p>
-                <hr>
-            `;
-
-            // Simula lista de produtos
-            const mockProducts = [
-                { id: 'prod1', name: 'Produto A', value: '500.00', quantity: '2', unit: 'UN', ncm: '1234.56.78', cfop: '5102' },
-                { id: 'prod2', name: 'Serviço B', value: '300.00', quantity: '1', unit: 'UN', ncm: '9876.54.32', cfop: '5933' },
-                { id: 'prod3', name: 'Produto C', value: '434.56', quantity: '3', unit: 'UN', ncm: '1122.33.44', cfop: '5101' }
-            ];
-
-            mockProducts.forEach(product => {
-                const listItem = document.createElement('li');
-                listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-                listItem.dataset.productId = product.id;
-                listItem.innerHTML = `
-                    ${product.name}
-                    <span class="badge bg-primary rounded-pill">R$ ${product.value}</span>
-                `;
-                listItem.addEventListener('click', () => {
-                    // Remove 'active' de todos os itens e adiciona ao clicado
-                    document.querySelectorAll('#productList .list-group-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    listItem.classList.add('active');
-                    // Exibe os detalhes do produto
-                    productDetailsDiv.innerHTML = `
-                        <h5>${product.name}</h5>
-                        <p><strong>Valor Unitário:</strong> R$ ${product.value}</p>
-                        <p><strong>Quantidade:</strong> ${product.quantity} ${product.unit}</p>
-                        <p><strong>NCM:</strong> ${product.ncm}</p>
-                        <p><strong>CFOP:</strong> ${product.cfop}</p>
-                        <p><em>(Detalhes de impostos, etc., seriam adicionados aqui em um XML real)</em></p>
-                    `;
-                });
-                productListUl.appendChild(listItem);
-            });
-
-            // Exibe a seção do visualizador
-            showSection(viewerSection);
-        }
-
-        // Event listener para o input de arquivo (atualiza o nome do arquivo na label)
-        if (arquivoInput) {
-            arquivoInput.addEventListener('change', (event) => {
+        // Event listener para o input de arquivo
+        if (fileInput) {
+            fileInput.addEventListener('change', (event) => {
                 if (event.target.files.length > 0) {
-                    arquivolab.textContent = event.target.files[0].name;
                     console.log('Arquivo selecionado:', event.target.files[0].name);
-                } else {
-                    arquivolab.textContent = 'Nenhum arquivo selecionado';
+                    // Em um cenário real, você processaria o XML aqui e preencheria o visualizador.
+
+                    showSection(viewerSection); // Exibe a seção do visualizador
                 }
             });
         }
-
-        // Event listener para o botão "LER XML"
-        if (lerXmlBtn) {
-            lerXmlBtn.addEventListener('click', () => {
-                if (arquivoInput.files.length > 0) {
-                    // Chama a função para simular o processamento e exibição do XML
-                    parseAndDisplayXml(arquivoInput.files[0]);
-                } else {
-                    // Exibe o modal de erro se nenhum arquivo for selecionado
-                    const errorModal = document.getElementById('errorModal');
-                    const errorModalTitle = document.getElementById('errorModalTitle');
-                    const errorModalMessage = document.getElementById('errorModalMessage');
-                    const errorModalCloseBtn = document.getElementById('errorModalCloseBtn');
-
-                    errorModalTitle.textContent = 'Erro de Leitura';
-                    errorModalMessage.textContent = 'Por favor, selecione um arquivo XML antes de clicar em "LER XML".';
-                    errorModal.style.display = 'flex'; // Exibe o modal
-                    errorModalCloseBtn.onclick = () => {
-                        errorModal.style.display = 'none'; // Esconde o modal ao clicar em fechar
-                    };
-                }
-            });
-        }
-
 
         // Event listeners para os links do rodapé
         linkAbout.addEventListener('click', (e) => {
@@ -814,9 +651,6 @@
         if (backToUploadBtn) {
             backToUploadBtn.addEventListener('click', () => {
                 showSection(uploadSection);
-                // Opcional: resetar o campo de arquivo e a label ao voltar
-                arquivoInput.value = '';
-                arquivolab.textContent = 'Nenhum arquivo selecionado';
             });
         }
 
