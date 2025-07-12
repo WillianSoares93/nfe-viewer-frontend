@@ -58,6 +58,13 @@
       align-items: center; /* Centraliza horizontalmente */
       border-radius: 8px; /* Bordas arredondadas */
     }
+    .loader-content { /* Novo estilo para centralizar o conteúdo do loader */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
     .loader {
       border: 8px solid #f3f3f3; /* Borda cinza clara */
       border-top: 8px solid var(--primary-orange); /* Borda superior laranja (para o spinner) */
@@ -268,33 +275,7 @@
     }
 
     /* Estilos para a barra de progresso de upload */
-    .barra-fundo {
-        width: 100%;
-        background-color: #ddd;
-        border-radius: 5px;
-        margin-top: 10px;
-        height: 20px;
-        position: relative;
-    }
-
-    .barra {
-        height: 100%;
-        width: 0%;
-        background-color: var(--primary-orange);
-        border-radius: 5px;
-        transition: width 0.3s ease-in-out;
-    }
-
-    #BarraTexto {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        text-align: center;
-        color: white;
-        line-height: 20px;
-        text-shadow: 1px 1px 1px black;
-    }
+    /* REMOVIDO: .barra-fundo, .barra, #BarraTexto */
 
     /* Responsividade para telas menores */
     @media (max-width: 768px) {
@@ -411,10 +392,7 @@
     <div class="loader-content">
         <div class="loader"></div>
         <p id="loaderText" class="loader-text">Carregando...</p>
-        <div class="barra-fundo" id="barraFundo" style="display: none;">
-            <div id="Barra" class="barra" style="width: 0%"></div>
-            <div id="BarraTexto" style="color: white; text-align: center; white-space:nowrap; position: relative; width: 100%; margin-top: -20px; text-shadow: 1px 1px 1px black">0 %</div>
-        </div>
+        <!-- A barra de progresso foi removida daqui -->
     </div>
   </div>
 
@@ -610,15 +588,17 @@
     function MsgB(title) {
         const loaderOverlay = ele('loaderOverlay');
         const loaderText = ele('loaderText');
-        const barraFundo = ele('barraFundo'); // Referência ao elemento da barra de fundo
-        const barra = ele('Barra');
-        const barraTexto = ele('BarraTexto');
+        // A barra de progresso foi removida, então não há necessidade de referenciá-la aqui
+        // const barraFundo = ele('barraFundo'); 
+        // const barra = ele('Barra');
+        // const barraTexto = ele('BarraTexto');
 
         if (loaderText) loaderText.textContent = title;
         if (loaderOverlay) loaderOverlay.style.display = 'flex';
-        if (barraFundo) barraFundo.style.display = 'block'; // Mostra a barra de progresso
-        if (barra) barra.style.width = '0%';
-        if (barraTexto) barraTexto.innerHTML = '0 %';
+        // Removido o código que mostrava a barra de progresso
+        // if (barraFundo) barraFundo.style.display = 'block'; 
+        // if (barra) barra.style.width = '0%';
+        // if (barraTexto) barraTexto.innerHTML = '0 %';
     }
 
     /**
@@ -626,9 +606,11 @@
      */
     function MsgF() {
         const loaderOverlay = ele('loaderOverlay');
-        const barraFundo = ele('barraFundo');
+        // A barra de progresso foi removida, então não há necessidade de referenciá-la aqui
+        // const barraFundo = ele('barraFundo');
         if (loaderOverlay) loaderOverlay.style.display = 'none';
-        if (barraFundo) barraFundo.style.display = 'none'; // Esconde a barra de progresso
+        // Removido o código que escondia a barra de progresso
+        // if (barraFundo) barraFundo.style.display = 'none'; 
     }
 
 
@@ -648,7 +630,8 @@
 
         var fileInput = ele('arquivo');
         var formData = new FormData();
-        let interval; // Declarar 'interval' aqui para que seja acessível em todo o escopo da função
+        // 'interval' não é mais necessário aqui, pois a barra de progresso foi removida
+        // let interval; 
 
         for (var i = 0; i < fileInput.files.length; i++) {
             formData.append('arquivo', fileInput.files[i]);
@@ -659,26 +642,26 @@
         formData.append('descricao', ele('descricao').value);
 
         try {
-            // Exibir barra de progresso (simulada ou real se o servidor suportar)
-            ele('Barra').style.width = '0%';
-            ele('BarraTexto').innerHTML = '0% Completo.';
+            // Removido o código que exibia e atualizava a barra de progresso
+            // ele('Barra').style.width = '0%';
+            // ele('BarraTexto').innerHTML = '0% Completo.';
 
             const response = await fetch(`${PROXY_BASE_URL}/send-contact-email`, {
                 method: 'POST',
                 body: formData
             });
 
-            // Simular progresso para o frontend, já que fetch não tem onprogress para upload
-            let progress = 0;
-            interval = setInterval(() => { // Atribuir a 'interval' declarado acima
-                progress += 10;
-                if (progress <= 100) {
-                    ele('Barra').style.width = progress + '%';
-                    ele('BarraTexto').innerHTML = progress + '% Completo.';
-                } else {
-                    clearInterval(interval);
-                }
-            }, 100);
+            // Removido o código de simulação de progresso
+            // let progress = 0;
+            // interval = setInterval(() => { 
+            //     progress += 10;
+            //     if (progress <= 100) {
+            //         ele('Barra').style.width = progress + '%';
+            //         ele('BarraTexto').innerHTML = progress + '% Completo.';
+            //     } else {
+            //         clearInterval(interval);
+            //     }
+            // }, 100);
 
 
             if (!response.ok) {
@@ -687,9 +670,11 @@
             }
 
             const result = await response.json();
-            clearInterval(interval); // Parar simulação de progresso
-            ele('Barra').style.width = '100%';
-            ele('BarraTexto').innerHTML = '100% Completo.';
+            // Removido o clearInterval
+            // clearInterval(interval); 
+            // Removido o código de atualização final da barra
+            // ele('Barra').style.width = '100%';
+            // ele('BarraTexto').innerHTML = '100% Completo.';
 
             if (result.status === 'OK') {
                 MsgF(); // Fecha o modal de progresso
@@ -701,9 +686,10 @@
             }
 
         } catch (error) {
-            if (interval) { // Verificar se 'interval' foi definido antes de tentar limpar
-                clearInterval(interval); // Parar simulação de progresso em caso de erro
-            }
+            // Removido o clearInterval
+            // if (interval) { 
+            //     clearInterval(interval); 
+            // }
             MsgF(); // Fecha o modal de progresso
             console.error("Erro ao enviar contato:", error);
             MsgInf('Erro ao enviar a mensagem: ' + error.message);
