@@ -197,6 +197,13 @@
         text-align: left; /* Alinha o texto do span à esquerda */
     }
 
+    /* Ajuste para remover o espaço inicial dos inputs e selects */
+    .contatocampos input[type="email"],
+    .contatocampos select {
+        padding-left: 15px; /* Garante que o texto comece no início da barra */
+    }
+
+
     .butenviar {
         cursor: pointer;
         border: 0px none;
@@ -249,14 +256,16 @@
 
     /* Estilos para a primeira célula da tabela (onde os ícones ficavam) */
     .contatocampos table td:first-child {
-        /* Removido: width: 50px; */ /* Largura não necessária se não há ícone */
-        padding: 15px; /* Mantém o padding para espaçamento */
-        /* Removido: display: flex; */
-        /* Removido: align-items: center; */
-        /* Removido: justify-content: center; */
+        padding: 0; /* Remove todo o padding, já que não há ícone e o input terá seu próprio padding */
     }
 
-    /* Removidos todos os estilos para .img-cont e suas variações */
+    /* Estilo para o logo na página de Contato */
+    .contact-logo {
+      max-width: 150px; /* Tamanho do logo */
+      height: auto;
+      margin-bottom: 20px; /* Espaçamento abaixo do logo */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
 
     /* Estilos para a barra de progresso de upload */
     .barra-fundo {
@@ -402,7 +411,7 @@
     <div class="loader-content">
         <div class="loader"></div>
         <p id="loaderText" class="loader-text">Carregando...</p>
-        <div class="barra-fundo" style="display: none;">
+        <div class="barra-fundo" id="barraFundo" style="display: none;">
             <div id="Barra" class="barra" style="width: 0%"></div>
             <div id="BarraTexto" style="color: white; text-align: center; white-space:nowrap; position: relative; width: 100%; margin-top: -20px; text-shadow: 1px 1px 1px black">0 %</div>
         </div>
@@ -425,6 +434,7 @@
   <!-- Seção Contato -->
   <div id="contact-section" class="content-section container">
     <div class="contato-form-container">
+        <img src="logo.png" alt="Logo NF-e Viewer" class="contact-logo" onerror="this.onerror=null; this.src='https://placehold.co/150x150/003366/FFFFFF?text=Logo';">
         <h1 id="texto1">CONTATO</h1>
         <div id="texto2">Dúvidas, erro ou sugestão. Escreva aqui.</div>
 
@@ -527,6 +537,9 @@
                 currentMsgQueCallback.no(); // Chama o callback 'no' se for um MsgQue
             }
             currentMsgQueCallback = null; // Limpa o callback
+            // Remover o event listener para evitar múltiplos
+            customModalCloseBtn.removeEventListener('click', arguments.callee);
+            if (customModalConfirmBtn) customModalConfirmBtn.removeEventListener('click', arguments.callee);
         });
     }
 
@@ -537,6 +550,9 @@
                 currentMsgQueCallback.yes(); // Chama o callback 'yes' se for um MsgQue
             }
             currentMsgQueCallback = null; // Limpa o callback
+            // Remover o event listener para evitar múltiplos
+            customModalCloseBtn.removeEventListener('click', arguments.callee);
+            customModalConfirmBtn.removeEventListener('click', arguments.callee);
         });
     }
 
@@ -549,7 +565,10 @@
         if (customModalTitle) customModalTitle.textContent = "Informação";
         if (customModalMessage) customModalMessage.textContent = message;
         if (customModalConfirmBtn) customModalConfirmBtn.style.display = 'none'; // Oculta botão de confirmar
-        if (customModalCloseBtn) customModalCloseBtn.textContent = 'Fechar'; // Garante texto "Fechar"
+        if (customModalCloseBtn) {
+            customModalCloseBtn.textContent = 'Fechar'; // Garante texto "Fechar"
+            customModalCloseBtn.classList.remove('cancel-btn'); // Remove estilo de cancelar
+        }
         if (customMessageModal) customMessageModal.classList.add('show');
 
         // Adiciona o callback ao botão de fechar, se existir
@@ -675,7 +694,7 @@
             if (result.status === 'OK') {
                 MsgF(); // Fecha o modal de progresso
                 ele('texto1').innerHTML = 'Mensagem enviada';
-                ele('texto2').innerHTML = 'A resposta será feita no e-mail informado.';
+                ele('texto2').innerHTML = ''; // Remove a mensagem "A resposta será feita no e-mail informado."
                 ele('divDados').style.display = 'none'; // Oculta o formulário
             } else {
                 MsgInf(result.message || 'Ocorreu um erro ao enviar a mensagem.');
