@@ -311,6 +311,80 @@
         font-size: 14px;
       }
     }
+
+    /* Estilos para o Modal de Mensagens Customizado */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .custom-modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .custom-modal-overlay.show .custom-modal-content {
+        transform: translateY(0);
+    }
+
+    .custom-modal-content h2 {
+        color: var(--primary-blue);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .custom-modal-content p {
+        color: #555;
+        margin-bottom: 25px;
+        font-size: 1rem;
+    }
+
+    .custom-modal-buttons button {
+        background-color: var(--primary-orange);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-modal-buttons button:hover {
+        background-color: #d85c1b;
+    }
+
+    .custom-modal-buttons button.cancel-btn {
+        background-color: #6c757d;
+    }
+
+    .custom-modal-buttons button.cancel-btn:hover {
+        background-color: #5a6268;
+    }
   </style>
 </head>
 <body>
@@ -322,6 +396,31 @@
       </a>
     </div>
   </nav>
+
+  <!-- Sobreposição do Loader (para mensagens de progresso) -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="loader-content">
+        <div class="loader"></div>
+        <p id="loaderText" class="loader-text">Carregando...</p>
+        <div class="barra-fundo" style="display: none;">
+            <div id="Barra" class="barra" style="width: 0%"></div>
+            <div id="BarraTexto" style="color: white; text-align: center; white-space:nowrap; position: relative; width: 100%; margin-top: -20px; text-shadow: 1px 1px 1px black">0 %</div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Modal de Mensagens Customizado (para MsgInf e MsgQue) -->
+  <div id="customMessageModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+          <h2 id="customModalTitle"></h2>
+          <p id="customModalMessage"></p>
+          <div class="custom-modal-buttons">
+              <button id="customModalConfirmBtn" style="display: none;">Confirmar</button>
+              <button id="customModalCloseBtn">Fechar</button>
+          </div>
+      </div>
+  </div>
+
 
   <!-- Seção Contato -->
   <div id="contact-section" class="content-section container">
@@ -411,43 +510,108 @@
         return document.getElementById(id);
     }
 
-    // Funções de modal (stubs, pois a implementação completa não está no escopo do frontend)
-    // Você precisaria ter essas funções definidas globalmente ou incluí-las aqui
+    // Referências aos elementos do modal customizado
+    const customMessageModal = ele('customMessageModal');
+    const customModalTitle = ele('customModalTitle');
+    const customModalMessage = ele('customModalMessage');
+    const customModalCloseBtn = ele('customModalCloseBtn');
+    const customModalConfirmBtn = ele('customModalConfirmBtn');
+
+    let currentMsgQueCallback = null; // Para armazenar o callback de MsgQue
+
+    // Event listeners para o modal customizado
+    if (customModalCloseBtn) {
+        customModalCloseBtn.addEventListener('click', () => {
+            customMessageModal.classList.remove('show');
+            if (currentMsgQueCallback && typeof currentMsgQueCallback.no === 'function') {
+                currentMsgQueCallback.no(); // Chama o callback 'no' se for um MsgQue
+            }
+            currentMsgQueCallback = null; // Limpa o callback
+        });
+    }
+
+    if (customModalConfirmBtn) {
+        customModalConfirmBtn.addEventListener('click', () => {
+            customMessageModal.classList.remove('show');
+            if (currentMsgQueCallback && typeof currentMsgQueCallback.yes === 'function') {
+                currentMsgQueCallback.yes(); // Chama o callback 'yes' se for um MsgQue
+            }
+            currentMsgQueCallback = null; // Limpa o callback
+        });
+    }
+
+    /**
+     * Exibe um modal de informação customizado.
+     * @param {string} message - A mensagem a ser exibida.
+     * @param {function} [callback] - Função a ser chamada após o fechamento do modal.
+     */
     function MsgInf(message, callback) {
-        // Implementação de um modal de informação simples
-        alert(message); // Usando alert como fallback, idealmente seria um modal customizado
-        if (callback) callback();
+        if (customModalTitle) customModalTitle.textContent = "Informação";
+        if (customModalMessage) customModalMessage.textContent = message;
+        if (customModalConfirmBtn) customModalConfirmBtn.style.display = 'none'; // Oculta botão de confirmar
+        if (customModalCloseBtn) customModalCloseBtn.textContent = 'Fechar'; // Garante texto "Fechar"
+        if (customMessageModal) customMessageModal.classList.add('show');
+
+        // Adiciona o callback ao botão de fechar, se existir
+        const closeHandler = () => {
+            customMessageModal.classList.remove('show');
+            customModalCloseBtn.removeEventListener('click', closeHandler); // Remove para evitar múltiplos listeners
+            if (callback) callback();
+        };
+        customModalCloseBtn.addEventListener('click', closeHandler);
     }
 
+    /**
+     * Exibe um modal de pergunta customizado (Sim/Não).
+     * @param {string} message - A pergunta a ser exibida.
+     * @param {function} callbackYes - Função a ser chamada se o usuário confirmar.
+     * @param {function} callbackNo - Função a ser chamada se o usuário cancelar.
+     */
     function MsgQue(message, callbackYes, callbackNo) {
-        // Implementação de um modal de pergunta simples
-        if (confirm(message)) { // Usando confirm como fallback
-            if (callbackYes) callbackYes();
-        } else {
-            if (callbackNo) callbackNo();
+        if (customModalTitle) customModalTitle.textContent = "Confirmação";
+        if (customModalMessage) customModalMessage.textContent = message;
+        if (customModalConfirmBtn) {
+            customModalConfirmBtn.textContent = 'Sim';
+            customModalConfirmBtn.style.display = 'inline-block'; // Exibe botão de confirmar
         }
+        if (customModalCloseBtn) {
+            customModalCloseBtn.textContent = 'Não';
+            customModalCloseBtn.classList.add('cancel-btn'); // Estilo para botão de cancelar
+        }
+        if (customMessageModal) customMessageModal.classList.add('show');
+
+        // Armazena os callbacks para serem chamados pelos event listeners globais
+        currentMsgQueCallback = { yes: callbackYes, no: callbackNo };
     }
 
-    function MsgB(content) {
-        // Implementação de um modal de barra de progresso ou mensagem de carregamento
-        // Para este exemplo, vamos usar o loader overlay existente ou criar um simples
-        const loaderOverlay = document.getElementById('loaderOverlay');
-        const loaderText = document.getElementById('loaderText');
-        if (loaderOverlay && loaderText) {
-            loaderText.innerHTML = content.replace(/<div[^>]*BarraTexto[^>]*>(.*?)<\/div>/, '$1'); // Extrai o texto
-            loaderOverlay.style.display = 'flex';
-        } else {
-            console.log("MsgB content:", content); // Fallback para console
-        }
+    /**
+     * Exibe um modal de progresso com barra.
+     * @param {string} title - O título da mensagem de progresso.
+     */
+    function MsgB(title) {
+        const loaderOverlay = ele('loaderOverlay');
+        const loaderText = ele('loaderText');
+        const barraFundo = ele('barraFundo'); // Referência ao elemento da barra de fundo
+        const barra = ele('Barra');
+        const barraTexto = ele('BarraTexto');
+
+        if (loaderText) loaderText.textContent = title;
+        if (loaderOverlay) loaderOverlay.style.display = 'flex';
+        if (barraFundo) barraFundo.style.display = 'block'; // Mostra a barra de progresso
+        if (barra) barra.style.width = '0%';
+        if (barraTexto) barraTexto.innerHTML = '0 %';
     }
 
+    /**
+     * Oculta o modal de progresso.
+     */
     function MsgF() {
-        // Função para fechar o modal ou loader
-        const loaderOverlay = document.getElementById('loaderOverlay');
-        if (loaderOverlay) {
-            loaderOverlay.style.display = 'none';
-        }
+        const loaderOverlay = ele('loaderOverlay');
+        const barraFundo = ele('barraFundo');
+        if (loaderOverlay) loaderOverlay.style.display = 'none';
+        if (barraFundo) barraFundo.style.display = 'none'; // Esconde a barra de progresso
     }
+
 
     // Lógica do formulário de contato
     function MotivoSeleciona() {
@@ -558,12 +722,7 @@
         // Confirmação e envio
         MsgQue('Deseja realmente enviar ?',
             function () {
-                MsgB('<div style="padding: 15px">' +
-                     '<div class="lab">Enviando mensagem...</div>' +
-                     '<div class="barra-fundo">' +
-                     '<div id="Barra" class="barra" style="width: 0%"></div>' +
-                     '<div id="BarraTexto" style="color: white; text-align: center; white-space:nowrap; position: relative; width: 100%; margin-top: -20px; text-shadow: 1px 1px 1px black">0 %</div>' +
-                     '</div></div>');
+                MsgB('Enviando mensagem...'); // Passa apenas o título
                 document.onkeydown = null; // Desabilita keydown enquanto envia
                 Enviando();
             },
