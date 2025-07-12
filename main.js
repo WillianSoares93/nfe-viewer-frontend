@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p><strong>Base de Cálculo ICMS:</strong> R$ ${parseFloat(vBCICMS).toFixed(2)}</p>
                             <p><strong>Base de Cálculo IPI:</strong> R$ ${parseFloat(ipiBaseCalculo).toFixed(2)}</p>
                             <p><strong>Base de Cálculo PIS:</strong> R$ ${parseFloat(vBCPIS).toFixed(2)}</p>
-                            <p><strong>Base de Cálculo COFINS:</strong> R$ ${parseFloat(vBCCOFINS).toFixed(2)}</p>
+                            <p><strong>Base de Cálculo COFINS:</strong> R$ ${parseFloat(vCOFINS).toFixed(2)}</p>
                             <p><strong>Base de Cálculo ST:</strong> R$ ${parseFloat(vBCST).toFixed(2)} | <strong>Modalidade BC ST:</strong> ${modBCST}</p>
                             <hr>
                             <p><strong>${modalidade}</strong></p>
@@ -545,11 +545,13 @@ document.addEventListener("DOMContentLoaded", () => {
             selectedFile = file; // Armazena o arquivo selecionado
             if (fileNameDisplay) {
                 fileNameDisplay.textContent = file.name; // Exibe o nome do arquivo
+                fileNameDisplay.style.color = '#333'; // Define a cor para mais escura para o nome do arquivo selecionado
             }
         } else {
             selectedFile = null;
             if (fileNameDisplay) {
-                fileNameDisplay.textContent = "Nenhum arquivo selecionado";
+                fileNameDisplay.textContent = "Clique aqui e Escolha Seus XMLs NFe ou CTe"; // Texto padrão
+                fileNameDisplay.style.color = '#a9a9a9'; // Define a cor para mais clara para o texto padrão
             }
         }
     });
@@ -594,54 +596,18 @@ document.addEventListener("DOMContentLoaded", () => {
             currentXmlContent = ''; // Limpa o XML armazenado
             selectedFile = null; // Limpa o arquivo selecionado
             if (fileNameDisplay) {
-                fileNameDisplay.textContent = "Nenhum arquivo selecionado"; // Reseta a exibição do nome do arquivo
+                fileNameDisplay.textContent = "Clique aqui e Escolha Seus XMLs NFe ou CTe"; // Reseta a exibição do nome do arquivo
+                fileNameDisplay.style.color = '#a9a9a9'; // Reseta a cor
             }
         });
     }
 
-    // Gerencia a visibilidade das seções da página e reseta o estado do arquivo
-    const allSections = [uploadSection, viewerSection, document.getElementById('about-section'), document.getElementById('privacy-policy-section'), document.getElementById('terms-of-use-section'), document.getElementById('contact-section')];
-    const backToMainButtons = document.querySelectorAll('.btn-back-to-main');
-
-    function showSection(sectionToShow) {
-        allSections.forEach(section => {
-            if (section) {
-                section.style.display = 'none';
-            }
-        });
-
-        if (sectionToShow) {
-            if (sectionToShow === uploadSection || sectionToShow === document.getElementById('about-section') || sectionToShow === document.getElementById('privacy-policy-section') || sectionToShow === document.getElementById('terms-of-use-section') || sectionToShow === document.getElementById('contact-section')) {
-                sectionToShow.style.display = 'flex';
-                if (sectionToShow === uploadSection) {
-                    selectedFile = null; // Limpa o arquivo selecionado ao voltar para a seção de upload
-                    if (fileNameDisplay) {
-                        fileNameDisplay.textContent = "Nenhum arquivo selecionado"; // Reseta a exibição
-                    }
-                }
-            } else if (sectionToShow === viewerSection) {
-                sectionToShow.style.display = 'block';
-            }
-        }
-    }
-
-    // Event listeners para os links do rodapé e botões de voltar
-    const linkAbout = document.getElementById('link-about');
-    const linkPrivacy = document.getElementById('link-privacy');
-    const linkTerms = document.getElementById('link-terms');
-    const linkContact = document.getElementById('link-contact');
-
-    if (linkAbout) linkAbout.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('about-section')); });
-    if (linkPrivacy) linkPrivacy.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('privacy-policy-section')); });
-    if (linkTerms) linkTerms.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('terms-of-use-section')); });
-    if (linkContact) linkContact.addEventListener('click', (e) => { e.preventDefault(); showSection(document.getElementById('contact-section')); });
-
-    backToMainButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            showSection(uploadSection);
-        });
-    });
+    // A lógica de showSection para as páginas de conteúdo foi removida,
+    // pois agora são páginas HTML separadas.
+    // Apenas a lógica para alternar entre uploadSection e viewerSection permanece.
 
     // Garante que a seção de upload esteja visível por padrão ao carregar a página.
-    showSection(uploadSection);
+    // As outras seções agora são páginas HTML separadas.
+    uploadSection.style.display = 'flex';
+    viewerSection.style.display = 'none';
 });
