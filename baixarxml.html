@@ -421,14 +421,8 @@
                 <button onclick="novaConsulta()">NOVA CONSULTA</button>
             </div>
 
-            <!-- Div para exibir resultados da consulta -->
-            <div id="resultadoConsulta" style="display: none; margin-top: 20px;">
-                <h4 style="color: var(--primary-blue);">Resultados da Consulta:</h4>
-                <div class="form-buttons" style="margin-top: 15px;">
-                    <button onclick="visualizarNota()">VISUALIZAR NOTA (PDF)</button>
-                    <button onclick="downloadXml()">DOWNLOAD XML</button>
-                </div>
-            </div>
+            <!-- A div resultadoConsulta e os botões de download/visualização foram removidos,
+                 pois o objetivo agora é redirecionar diretamente para a SEFAZ. -->
         </div>
     </div>
     <div class="text-center mt-4">
@@ -563,15 +557,15 @@
 
         MsgB('Consultando nota...');
         try {
-            // Re-incorporar reCAPTCHA
+            // Chamar o reCAPTCHA antes de enviar para o proxy
             grecaptcha.ready(function() {
                 grecaptcha.execute('6LdMiaEUAAAAAFAkiK8dBv08u5jE6PHeAMa-qmyf', { action: 'homepage' }).then(async function(token) {
                     const formData = new FormData();
-                    formData.append('chave', chave); // Envia a chave como um campo de texto
-                    formData.append('token', token); // Envia o token reCAPTCHA para o backend
-                    formData.append('tipoDocumento', tipoDocumento); // Envia o tipo de documento
+                    formData.append('chave', chave);
+                    formData.append('token', token);
+                    formData.append('tipoDocumento', tipoDocumento);
 
-                    const response = await fetch(`${PROXY_BASE_URL}/proxy-fsist-gerarpdf`, {
+                    const response = await fetch(`${PROXY_BASE_URL}/proxy-fsist-consultar-sefaz`, {
                         method: 'POST',
                         body: formData
                     });
@@ -582,16 +576,23 @@
                     }
 
                     const result = await response.json();
-                    MsgF();
+                    MsgF(); // Esconde o loader
 
-                    if (result.status === 'OK' || result.linkPDF || result.linkXML) { // Adapte conforme a resposta real do seu server.js
-                        // Armazena os links para uso posterior nos botões de download/visualização
-                        window.fsistResult = result; 
-                        ele('resultadoConsulta').style.display = 'block';
-                        MsgInf('Consulta realizada com sucesso! Você pode visualizar o PDF ou baixar o XML.');
+                    if (result.status === 'OK') {
+                        let sefazUrl = '';
+                        if (tipoDocumento === 'NFe') {
+                            sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=&chNFe=${chave}`;
+                        } else if (tipoDocumento === 'CTe') {
+                            sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=&chCTe=${chave}`;
+                        }
+                        
+                        if (sefazUrl) {
+                            window.location.href = sefazUrl; // Redireciona a página para a SEFAZ
+                        } else {
+                            MsgInf('Não foi possível determinar a URL da SEFAZ para o tipo de documento selecionado.');
+                        }
                     } else {
                         MsgInf(result.message || 'Ocorreu um erro na consulta da nota.');
-                        ele('resultadoConsulta').style.display = 'none';
                     }
                 });
             });
@@ -600,30 +601,23 @@
             MsgF();
             console.error("Erro ao consultar nota:", error);
             MsgInf('Erro ao consultar a nota: ' + error.message);
-            ele('resultadoConsulta').style.display = 'none';
         }
     }
 
+    // As funções visualizarNota() e downloadXml() não são mais necessárias para este fluxo
+    // e foram removidas do HTML e do JavaScript.
     function visualizarNota() {
-        if (window.fsistResult && window.fsistResult.linkPDF) {
-            window.open(window.fsistResult.linkPDF, '_blank');
-        } else {
-            MsgInf('Nenhum link de PDF disponível para visualização.');
-        }
+        MsgInf('Esta função não está disponível neste modo de consulta. A página será redirecionada para a SEFAZ.');
     }
 
     function downloadXml() {
-        if (window.fsistResult && window.fsistResult.linkXML) {
-            window.open(window.fsistResult.linkXML, '_blank');
-        } else {
-            MsgInf('Nenhum link de XML disponível para download.');
-        }
+        MsgInf('Esta função não está disponível neste modo de consulta. A página será redirecionada para a SEFAZ.');
     }
 
     function novaConsulta() {
         ele('chave').value = '';
         ele('tipoDocumento').value = 'NFe';
-        ele('resultadoConsulta').style.display = 'none';
+        // ele('resultadoConsulta').style.display = 'none'; // Não é mais necessário
         window.fsistResult = null;
         ele('chave').focus();
         MsgInf('Pronto para uma nova consulta!');
