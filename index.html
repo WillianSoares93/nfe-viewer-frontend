@@ -109,13 +109,6 @@
     }
 
     /* Estilos para o novo layout de seleção/leitura de arquivo */
-    .upload-controls-container {
-        max-width: 800px; /* Alinha com a largura do card abaixo */
-        width: 100%; /* Garante que ocupe a largura total disponível até o max-width */
-        margin-left: auto; /* Centraliza o container */
-        margin-right: auto; /* Centraliza o container */
-    }
-
     .custom-file-input-wrapper {
         position: relative;
         display: flex;
@@ -412,6 +405,19 @@
       <a class="navbar-brand" href="/">
         NF-e Viewer
       </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/baixarxml.html">Download XML</a> <!-- NOVO LINK ADICIONADO AQUI -->
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
