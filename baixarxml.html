@@ -570,29 +570,40 @@
                         body: formData
                     });
 
+                    // Modificação aqui: Não tentar parsear JSON se a resposta não for ok
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Erro ao consultar a nota.');
+                        let errorMessage = 'Erro ao consultar a nota.';
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            // Se não for JSON, tenta pegar o texto bruto
+                            const errorText = await response.text();
+                            errorMessage = errorText || errorMessage;
+                        }
+                        throw new Error(errorMessage);
                     }
 
-                    const result = await response.json();
+                    // Se a resposta for OK, não precisamos de um JSON específico, apenas que a requisição foi bem-sucedida
+                    // A FSist pode retornar um corpo vazio ou um texto simples "OK" para este endpoint
+                    // Não há necessidade de await response.json() aqui se não esperamos um JSON
+                    // const result = await response.json(); // Removido
+
                     MsgF(); // Esconde o loader
 
-                    if (result.status === 'OK') {
-                        let sefazUrl = '';
-                        if (tipoDocumento === 'NFe') {
-                            sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=&chNFe=${chave}`;
-                        } else if (tipoDocumento === 'CTe') {
-                            sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=&chCTe=${chave}`;
-                        }
-                        
-                        if (sefazUrl) {
-                            window.location.href = sefazUrl; // Redireciona a página para a SEFAZ
-                        } else {
-                            MsgInf('Não foi possível determinar a URL da SEFAZ para o tipo de documento selecionado.');
-                        }
+                    // Se a resposta do proxy foi OK (status 200-299), consideramos sucesso
+                    // e prosseguimos com o redirecionamento.
+                    let sefazUrl = '';
+                    if (tipoDocumento === 'NFe') {
+                        sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=&chNFe=${chave}`;
+                    } else if (tipoDocumento === 'CTe') {
+                        sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=&chCTe=${chave}`;
+                    }
+                    
+                    if (sefazUrl) {
+                        window.location.href = sefazUrl; // Redireciona a página para a SEFAZ
                     } else {
-                        MsgInf(result.message || 'Ocorreu um erro na consulta da nota.');
+                        MsgInf('Não foi possível determinar a URL da SEFAZ para o tipo de documento selecionado.');
                     }
                 });
             });
