@@ -5,6 +5,7 @@
     { "source": "/politica-de-privacidade", "destination": "/privacy-policy.html" },
     { "source": "/termos-de-uso", "destination": "/terms-of-use.html" },
     { "source": "/contato", "destination": "/contact.html" },
+    { "source": "/baixarxml", "destination": "/baixarxml.html" },
     { "source": "/", "destination": "/index.html" }
   ]
 }
