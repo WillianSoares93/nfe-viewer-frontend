@@ -453,7 +453,7 @@
   <!-- Campos ocultos para comunicação com a extensão -->
   <input type="hidden" id="stringsFSistChave" value="">
   <input type="hidden" id="stringsFSistUrl" value="">
-  <input type="hidden" id="stringsFSistClick" value="">
+  <button type="button" id="stringsFSistClick" style="display: none;"></button> <!-- Changed to button -->
   <input type="hidden" id="stringsFSistHtml" value="">
   <input type="hidden" id="stringsFSistDados" value="">
   <input type="hidden" id="stringsFSistLink" value="">
@@ -683,3 +683,52 @@
   </script>
 </body>
 </html>
+```
+
+**Próximos Passos Cruciais para Você:**
+
+O erro "API 'chrome.runtime.onMessage' não disponível" indica que o `script.js` da extensão não está sendo injetado na sua página. Para resolver isso, você **precisa garantir que a extensão do FSist esteja configurada corretamente para o seu domínio**.
+
+Por favor, siga estes passos com **extrema atenção**:
+
+1.  **Modifique o `manifest.json` da Extensão do FSist:**
+    * Localize a pasta onde você tem o código-fonte da extensão do FSist.
+    * Abra o arquivo `manifest.json` com um editor de texto.
+    * Encontre a seção `content_scripts`. Dentro dela, procure pela lista `matches`.
+    * **Adicione o seu domínio** `https://nfeinfo.vercel.app/*` a essa lista.
+        * **Exemplo:** Se a linha original for:
+            ```json
+            "matches": [ "https://www.nfe.fazenda.gov.br/*", "https://www.cte.fazenda.gov.br/*", "https://*.fsist.com.br/*" ]
+            ```
+            Você deve alterá-la para:
+            ```json
+            "matches": [ "https://www.nfe.fazenda.gov.br/*", "https://www.cte.fazenda.gov.br/*", "https://*.fsist.com.br/*", "https://nfeinfo.vercel.app/*" ]
+            ```
+            **Certifique-se de que não há erros de sintaxe JSON (vírgulas, aspas, etc.).**
+
+2.  **Reinstale/Recarregue a Extensão Modificada no Seu Navegador:**
+    * Abra o navegador Chrome.
+    * Vá para `chrome://extensions` na barra de endereços e pressione Enter.
+    * No canto superior direito, ative o **"Modo Desenvolvedor"**.
+    * **Se a extensão do FSist já estiver instalada:**
+        * Clique no botão de "recarregar" (uma seta circular) ao lado da extensão do FSist.
+    * **Se a extensão do FSist não estiver instalada ou se você quiser garantir uma instalação limpa:**
+        * Remova a versão existente da extensão do FSist (se houver).
+        * Clique no botão **"Carregar sem compactação" (Load unpacked)**.
+        * Navegue até a pasta onde você modificou o `manifest.json` e selecione essa pasta.
+    * Verifique se a extensão está **ativada**.
+
+**Sobre o segundo erro ("A listener indicated an asynchronous response..."):**
+
+Este erro, como mencionei, provavelmente se origina no `background.js` da extensão. O problema é que em algumas partes do `background.js`, a função `sendResponse(true)` é chamada, mas o listener não está configurado para uma resposta assíncrona, ou a resposta assíncrona não está sendo tratada corretamente.
+
+Para corrigir isso no `background.js` da extensão, você precisaria:
+
+* **Identificar as chamadas `sendResponse(true)`:** No `background.js`, procure por linhas como `sendResponse(true);`.
+* **Ajustar o retorno do listener:**
+    * Se a `sendResponse` for chamada **imediatamente e de forma síncrona**, o listener **NÃO DEVE** retornar `true`. Ele deve apenas chamar `sendResponse(algum_valor_aqui);` e implicitamente retornar `undefined` (ou nada).
+    * Se a `sendResponse` for chamada **posteriormente, de forma assíncrona** (por exemplo, dentro de um `fetch().then()` ou um `setTimeout()`), então o listener **DEVE** retornar `true` explicitamente para sinalizar ao Chrome que a resposta virá mais tarde.
+
+Por exemplo, no `background.js` que você enviou, algumas partes como `sendResponse(true);` para `SetHtml`, `SetDados`, `Fechar`, `SetConfig` e o `else` final são problemáticas. Elas deveriam ser apenas `sendResponse({status: 'success'});` sem retornar `true` da função do listener, a menos que a `sendResponse` seja realmente assíncrona.
+
+**Foco Principal:** Por favor, concentre-se primeiro em seguir os passos para modificar e reinstalar a extensão. Uma vez que o `script.js` esteja sendo injetado na sua página, o primeiro erro desaparecerá, e poderemos então ver o comportamento do fluxo de comunicação. Se o segundo erro persistir e for um problema funcional, você precisará aplicar as correções sugeridas no `background.js` da extens
