@@ -421,8 +421,14 @@
                 <button onclick="novaConsulta()">NOVA CONSULTA</button>
             </div>
 
-            <!-- A div resultadoConsulta e os botões de download/visualização foram removidos,
-                 pois o objetivo agora é redirecionar diretamente para a SEFAZ. -->
+            <!-- Div para exibir resultados da consulta (re-adicionada para os links de download) -->
+            <div id="resultadoConsulta" style="display: none; margin-top: 20px;">
+                <h4 style="color: var(--primary-blue);">Resultados da Consulta:</h4>
+                <div class="form-buttons" style="margin-top: 15px;">
+                    <button onclick="visualizarNota()">VISUALIZAR NOTA (PDF)</button>
+                    <button onclick="downloadXml()">DOWNLOAD XML</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="text-center mt-4">
@@ -444,10 +450,22 @@
     </div>
   </footer>
 
+  <!-- Campos ocultos para comunicação com a extensão -->
+  <input type="hidden" id="stringsFSistChave" value="">
+  <input type="hidden" id="stringsFSistUrl" value="">
+  <input type="hidden" id="stringsFSistClick" value="">
+  <input type="hidden" id="stringsFSistHtml" value="">
+  <input type="hidden" id="stringsFSistDados" value="">
+  <input type="hidden" id="stringsFSistLink" value="">
+  <input type="hidden" id="stringsFSistXml" value="">
+  <input type="hidden" id="stringsFSIST_CONFIG" value="">
+  <input type="hidden" id="stringsFSistVersao" value="">
+
   <!-- Link para o Bootstrap JS (com Popper.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // URL do seu servidor proxy
+    // Remover a URL do proxy, pois a comunicação será direta com a extensão
+    // const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; 
 
     function ele(id) {
         return document.getElementById(id);
@@ -531,14 +549,11 @@
     // --- Funções Específicas da Página de Download ---
 
     function ContarCaracteres() {
-        const chaveInput = ele('chave');
-        // Você pode adicionar um contador visual se desejar, mas o foco é a validação
-        // console.log("Qtd.Caracteres: " + chaveInput.value.length);
+        // Lógica de contagem de caracteres, se necessário.
     }
 
     function TipoDocumentoSelecionado() {
         // Lógica para ajustar a UI ou validação com base no tipo selecionado, se necessário
-        // Por enquanto, não há impacto visual direto, mas pode ser usado para validação futura
     }
 
     async function consultarNota() {
@@ -553,93 +568,118 @@
             MsgInf(`A chave informada tem ${chave.length} dígitos, mas deve ter 44 dígitos.`);
             return;
         }
-        // Adicionar validação de dígito verificador se desejar, como no baixarxml.html original
 
-        MsgB('Consultando nota...');
+        MsgB('Abrindo janela da SEFAZ via extensão...');
+
         try {
-            // Chamar o reCAPTCHA antes de enviar para o proxy
-            grecaptcha.ready(function() {
-                grecaptcha.execute('6LdMiaEUAAAAAFAkiK8dBv08u5jE6PHeAMa-qmyf', { action: 'homepage' }).then(async function(token) {
-                    const formData = new FormData();
-                    formData.append('chave', chave);
-                    formData.append('token', token);
-                    formData.append('tipoDocumento', tipoDocumento);
+            // Preenche os campos ocultos que a extensão espera
+            ele('stringsFSistChave').value = chave;
+            
+            let sefazUrl = '';
+            if (tipoDocumento === 'NFe') {
+                sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=`;
+            } else if (tipoDocumento === 'CTe') {
+                sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=`;
+            }
+            ele('stringsFSistUrl').value = sefazUrl;
 
-                    const response = await fetch(`${PROXY_BASE_URL}/proxy-fsist-consultar-sefaz`, {
-                        method: 'POST',
-                        body: formData
-                    });
+            // Simula o clique no botão oculto que a extensão está escutando
+            ele('stringsFSistClick').click();
 
-                    // Modificação aqui: Não tentar parsear JSON se a resposta não for ok
-                    if (!response.ok) {
-                        let errorMessage = 'Erro ao consultar a nota.';
-                        try {
-                            const errorData = await response.json();
-                            errorMessage = errorData.message || errorMessage;
-                        } catch (e) {
-                            // Se não for JSON, tenta pegar o texto bruto
-                            const errorText = await response.text();
-                            errorMessage = errorText || errorMessage;
-                        }
-                        throw new Error(errorMessage);
-                    }
-
-                    // Se a resposta for OK, não precisamos de um JSON específico, apenas que a requisição foi bem-sucedida
-                    // A FSist pode retornar um corpo vazio ou um texto simples "OK" para este endpoint
-                    // Não há necessidade de await response.json() aqui se não esperamos um JSON
-                    // const result = await response.json(); // Removido
-
-                    MsgF(); // Esconde o loader
-
-                    // Se a resposta do proxy foi OK (status 200-299), consideramos sucesso
-                    // e prosseguimos com o redirecionamento.
-                    let sefazUrl = '';
-                    if (tipoDocumento === 'NFe') {
-                        sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=&chNFe=${chave}`;
-                    } else if (tipoDocumento === 'CTe') {
-                        sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=&chCTe=${chave}`;
-                    }
-                    
-                    if (sefazUrl) {
-                        window.location.href = sefazUrl; // Redireciona a página para a SEFAZ
-                    } else {
-                        MsgInf('Não foi possível determinar a URL da SEFAZ para o tipo de documento selecionado.');
-                    }
-                });
-            });
+            // A extensão agora lidará com a abertura da janela e o reCAPTCHA.
+            // A resposta (link PDF/XML) virá via chrome.runtime.onMessage.addListener
 
         } catch (error) {
             MsgF();
-            console.error("Erro ao consultar nota:", error);
-            MsgInf('Erro ao consultar a nota: ' + error.message);
+            console.error("Erro ao iniciar consulta via extensão:", error);
+            MsgInf('Erro ao tentar se comunicar com a extensão. Certifique-se de que a extensão está instalada e ativa com as permissões corretas.');
         }
     }
 
-    // As funções visualizarNota() e downloadXml() não são mais necessárias para este fluxo
-    // e foram removidas do HTML e do JavaScript.
     function visualizarNota() {
-        MsgInf('Esta função não está disponível neste modo de consulta. A página será redirecionada para a SEFAZ.');
+        if (window.fsistResult && window.fsistResult.linkPDF) {
+            window.open(window.fsistResult.linkPDF, '_blank');
+        } else {
+            MsgInf('Nenhum link de PDF disponível para visualização.');
+        }
     }
 
     function downloadXml() {
-        MsgInf('Esta função não está disponível neste modo de consulta. A página será redirecionada para a SEFAZ.');
+        if (window.fsistResult && window.fsistResult.linkXML) {
+            window.open(window.fsistResult.linkXML, '_blank');
+        } else {
+            MsgInf('Nenhum link de XML disponível para download.');
+        }
     }
 
     function novaConsulta() {
         ele('chave').value = '';
         ele('tipoDocumento').value = 'NFe';
-        // ele('resultadoConsulta').style.display = 'none'; // Não é mais necessário
+        ele('resultadoConsulta').style.display = 'none'; // Esconde os resultados
         window.fsistResult = null;
         ele('chave').focus();
         MsgInf('Pronto para uma nova consulta!');
     }
+
+    // --- Listener para mensagens da extensão ---
+    // Este código DEVE estar dentro de um bloco que só é executado se `chrome.runtime` existir,
+    // garantindo que não quebre em navegadores sem a extensão ou em outros ambientes.
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {        
+                if (request.message === "set_html") {
+                    // Se a extensão enviar HTML (pode ser uma página de erro da SEFAZ, por exemplo)
+                    // Você pode decidir como exibir isso, talvez em um modal ou log.
+                    console.log("Extensão enviou HTML:", atob(request.content));
+                    MsgF(); // Esconde o loader
+                    MsgInf("A extensão recebeu uma resposta HTML. Verifique os logs do console para detalhes.");
+                    sendResponse({status: "success"});
+                }
+                else if (request.message === "set_dados") {
+                    // A extensão pode enviar dados do formulário da SEFAZ
+                    console.log("Extensão enviou dados:", atob(request.content));
+                    MsgF(); // Esconde o loader
+                    // Você pode processar esses dados se necessário, mas para o fluxo de download, não é direto.
+                    sendResponse({status: "success"});
+                }
+                else if (request.message === "set_link") {
+                    // A extensão enviou um link (provavelmente PDF)
+                    MsgF(); // Esconde o loader
+                    const decodedLink = atob(request.content);
+                    console.log("Extensão enviou link:", decodedLink);
+                    window.fsistResult = { linkPDF: decodedLink, linkXML: null }; // Armazena o link PDF
+                    ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                    MsgInf('Link de PDF recebido da extensão. Você pode visualizar ou aguardar o XML.');
+                    sendResponse({status: "success"});
+                }
+                else if (request.message === "set_xml") {
+                    // A extensão enviou o XML (base64)
+                    MsgF(); // Esconde o loader
+                    const decodedXml = atob(request.content);
+                    console.log("Extensão enviou XML:", decodedXml);
+                    // Se já tiver linkPDF, mantém. Se não, define.
+                    window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${request.content}` }; // Armazena o XML como data URL
+                    ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                    MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível).');
+                    sendResponse({status: "success"});
+                }
+                // Adicione aqui outros tipos de mensagem que a extensão possa enviar
+                else {
+                    console.log("Mensagem desconhecida da extensão:", request.message, request.content);
+                    sendResponse({status: "success"});
+                }
+            }
+        );
+    } else {
+        console.warn("API 'chrome.runtime.onMessage' não disponível. A extensão pode não estar instalada ou ativa.");
+        MsgInf("A extensão do navegador não foi detectada ou não está ativa. A funcionalidade de consulta pode não funcionar como esperado. Por favor, certifique-se de que a extensão está instalada e configurada para este site.");
+    }
+
 
     // Inicialização
     document.addEventListener('DOMContentLoaded', function() {
         ele('chave').focus();
     });
   </script>
-  <!-- reCAPTCHA script -->
-  <script src="https://www.google.com/recaptcha/api.js?render=6LdMiaEUAAAAAFAkiK8dBv08u5jE6PHeAMa-qmyf"></script>
 </body>
 </html>
