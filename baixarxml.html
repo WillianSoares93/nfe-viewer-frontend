@@ -425,6 +425,7 @@
             <div id="resultadoConsulta" style="display: none; margin-top: 20px;">
                 <h4 style="color: var(--primary-blue);">Resultados da Consulta:</h4>
                 <div class="form-buttons" style="margin-top: 15px;">
+                    <button id="gerarDanfeBtn" class="btn btn-primary">GERAR DANFE</button>
                     <button onclick="visualizarNota()">VISUALIZAR NOTA (PDF)</button>
                     <button onclick="downloadXml()">DOWNLOAD XML</button>
                 </div>
@@ -463,6 +464,8 @@
 
   <!-- Link para o Bootstrap JS (com Popper.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Link para a biblioteca JSZip (para descompactar arquivos ZIP) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
     function ele(id) {
         return document.getElementById(id);
@@ -476,6 +479,10 @@
     const customModalConfirmBtn = ele('customModalConfirmBtn');
 
     let currentMsgQueCallback = null;
+    let currentXmlContent = ''; // Variável para armazenar o conteúdo XML
+
+    // URL base do seu servidor proxy
+    const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // Certifique-se de que esta URL está correta
 
     if (customModalCloseBtn) {
         customModalCloseBtn.addEventListener('click', () => {
@@ -606,9 +613,108 @@
 
     function downloadXml() {
         if (window.fsistResult && window.fsistResult.linkXML) {
-            window.open(window.fsistResult.linkXML, '_blank');
+            // Se o linkXML for um data URL (base64), cria um link para download
+            if (window.fsistResult.linkXML.startsWith('data:')) {
+                const a = document.createElement('a');
+                a.href = window.fsistResult.linkXML;
+                a.download = 'nota_fiscal.xml'; // Nome do arquivo para download
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                window.open(window.fsistResult.linkXML, '_blank');
+            }
         } else {
             MsgInf('Nenhum link de XML disponível para download.');
+        }
+    }
+
+    async function gerarDanfe() {
+        if (!currentXmlContent) {
+            MsgInf("Conteúdo XML não carregado. Não é possível gerar DANFE.");
+            return;
+        }
+
+        MsgB('Gerando DANFE do XML...'); // Exibe loader
+
+        try {
+            const formData = new FormData();
+            // Cria um objeto File a partir do conteúdo XML
+            const xmlFile = new File([currentXmlContent], "nfe.xml", { type: "text/xml" });
+            formData.append("arquivo", xmlFile); // Adiciona o arquivo ao FormData
+
+            // Requisição para o seu servidor proxy
+            const proxyApiUrl = `${PROXY_BASE_URL}/proxy-fsist-gerarpdf`;
+
+            console.log(`Enviando XML para proxy: ${proxyApiUrl}`);
+            const responseProxy = await fetch(proxyApiUrl, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!responseProxy.ok) {
+                let errorData;
+                try {
+                    errorData = await responseProxy.json();
+                } catch (e) {
+                    errorData = { error: await responseProxy.text() };
+                }
+                console.error(`Erro do proxy: ${responseProxy.status} - ${errorData.error || responseProxy.statusText}`);
+                throw new Error(errorData.error || `Erro ao se comunicar com o proxy: ${responseProxy.status} ${responseProxy.statusText}`);
+            }
+
+            const resultDataFsist = await responseProxy.json();
+
+            if (resultDataFsist.Resultado === "OK" && resultDataFsist.id && resultDataFsist.Arquivo) {
+                MsgB('Baixando arquivo ZIP...');
+                const zipDownloadUrl = `${PROXY_BASE_URL}/proxy-fsist-downloadzip?id=${resultDataFsist.id}&arq=${encodeURIComponent(resultDataFsist.Arquivo)}`;
+
+                const zipResponse = await fetch(zipDownloadUrl);
+
+                if (!zipResponse.ok) {
+                    const errorText = await zipResponse.text();
+                    throw new Error(`Erro ao baixar o arquivo ZIP via proxy: ${zipResponse.status} ${zipResponse.statusText}. Detalhes: ${errorText}`);
+                }
+                const zipBlob = await zipResponse.blob();
+
+                MsgB('Descompactando PDF...');
+                if (typeof JSZip === "undefined") {
+                    throw new Error("Biblioteca JSZip não carregada. Verifique as inclusões de script.");
+                }
+                const jszip = new JSZip();
+                const zip = await jszip.loadAsync(zipBlob);
+
+                let pdfFileEntry = null;
+                for (const filenameInZip in zip.files) {
+                    if (filenameInZip.toLowerCase().endsWith(".pdf")) {
+                        pdfFileEntry = zip.files[filenameInZip];
+                        break;
+                    }
+                }
+
+                if (pdfFileEntry) {
+                    const pdfArrayBuffer = await pdfFileEntry.async("arraybuffer");
+                    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+                    window.open(pdfUrl, '_blank');
+
+                    MsgB('DANFE pronta!');
+
+                } else {
+                    throw new Error("PDF não encontrado no arquivo ZIP retornado pela API.");
+                }
+            } else {
+                throw new Error(`Erro retornado pela API FSist: ${resultDataFsist.Resultado || 'Resposta inesperada.'}`);
+            }
+
+        } catch (error) {
+            console.error("Erro ao gerar DANFE:", error);
+            MsgInf("Erro ao Gerar DANFE", error.message);
+        } finally {
+            setTimeout(() => {
+                MsgF();
+            }, 1500);
         }
     }
 
@@ -617,6 +723,7 @@
         ele('tipoDocumento').value = 'NFe';
         ele('resultadoConsulta').style.display = 'none'; // Esconde os resultados
         window.fsistResult = null;
+        currentXmlContent = ''; // Limpa o XML armazenado
         ele('chave').focus();
         MsgInf('Pronto para uma nova consulta!');
     }
@@ -652,11 +759,18 @@
         MsgF(); // Esconde o loader
         const decodedXml = atob(this.value);
         console.log("Extensão enviou XML:", decodedXml);
+        currentXmlContent = decodedXml; // Armazena o XML recebido
         // Se já tiver linkPDF, mantém. Se não, define.
         window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${this.value}` }; // Armazena o XML como data URL
         ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
-        MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível).');
+        MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
     });
+
+    // Event listener para o botão Gerar DANFE
+    const gerarDanfeBtn = ele('gerarDanfeBtn');
+    if (gerarDanfeBtn) {
+        gerarDanfeBtn.addEventListener('click', gerarDanfe);
+    }
 
     // Inicialização
     document.addEventListener('DOMContentLoaded', function() {
