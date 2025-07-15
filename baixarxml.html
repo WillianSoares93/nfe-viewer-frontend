@@ -574,9 +574,11 @@
             
             let sefazUrl = '';
             if (tipoDocumento === 'NFe') {
-                sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=`;
+                // URL para consulta de NF-e, tipo 'resumo' com o tipoConteudo do FSist
+                sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=`;
             } else if (tipoDocumento === 'CTe') {
-                sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=completa&tipoConteudo=mCK/KoCqru0=`;
+                // URL para consulta de CT-e, tipo 'resumo' (mantendo o tipoConteudo original para CT-e)
+                sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=mCK/KoCqru0=`;
             }
             ele('stringsFSistUrl').value = sefazUrl;
 
