@@ -769,6 +769,13 @@
                 ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
                 MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
                 break;
+            case "FSIST_CERTIFICADO_ERROR": // NOVO: Tratamento para erro de certificado
+                MsgF(); // Esconde o loader
+                const errorMessage = atob(event.data.content);
+                console.error("Erro de Certificado:", errorMessage);
+                MsgInf(`Erro: ${errorMessage}. Por favor, verifique se o seu certificado digital está instalado e configurado corretamente.`);
+                ele('resultadoConsulta').style.display = 'none'; // Esconde os botões de resultado
+                break;
         }
     });
 
