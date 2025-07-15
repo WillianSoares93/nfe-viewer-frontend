@@ -771,9 +771,29 @@
                 break;
             case "FSIST_CERTIFICADO_ERROR": // NOVO: Tratamento para erro de certificado
                 MsgF(); // Esconde o loader
-                const errorMessage = atob(event.data.content);
-                console.error("Erro de Certificado:", errorMessage);
-                MsgInf(`Erro: ${errorMessage}. Por favor, verifique se o seu certificado digital está instalado e configurado corretamente.`);
+                const errorHtmlContent = atob(event.data.content); // Conteúdo HTML da página de erro
+                console.error("Erro de Certificado (HTML):", errorHtmlContent);
+
+                let userFriendlyMessage = "Erro desconhecido. Por favor, verifique o console para mais detalhes.";
+                try {
+                    // Tenta parsear o HTML e extrair a mensagem específica
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(errorHtmlContent, "text/html");
+                    const errorMessageElement = doc.getElementById('ctl00_ContentPlaceHolder1_lblMensagemErro');
+                    if (errorMessageElement && errorMessageElement.textContent) {
+                        userFriendlyMessage = errorMessageElement.textContent.trim();
+                    } else {
+                        // Fallback se o elemento específico não for encontrado, procurar por texto comum
+                        if (errorHtmlContent.includes('É necessário utilizar certificado digital para acessar esta funcionalidade.')) {
+                            userFriendlyMessage = 'É necessário utilizar certificado digital para acessar esta funcionalidade.';
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erro ao parsear HTML de erro:", e);
+                    userFriendlyMessage = "Falha ao processar a mensagem de erro do certificado. Por favor, verifique o console.";
+                }
+                
+                MsgInf(`Erro: ${userFriendlyMessage}. Por favor, verifique se o seu certificado digital está instalado e configurado corretamente.`);
                 ele('resultadoConsulta').style.display = 'none'; // Esconde os botões de resultado
                 break;
         }
