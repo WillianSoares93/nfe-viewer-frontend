@@ -728,42 +728,48 @@
         MsgInf('Pronto para uma nova consulta!');
     }
 
-    // --- Listeners para eventos de click nos campos ocultos da extensão ---
-    // Estes listeners reagem quando o script.js da extensão clica nestes elementos
-    // para sinalizar que dados foram recebidos do background script.
+    // --- NOVO: Listener para mensagens do script de conteúdo da extensão ---
+    window.addEventListener('message', function(event) {
+        // É crucial verificar a origem da mensagem e o tipo para evitar ataques XSS
+        // Neste caso, como a mensagem vem do nosso próprio script de conteúdo,
+        // podemos verificar o `event.source` ou o `event.origin` se a extensão
+        // estiver em um domínio diferente. Para simplificar, verificaremos o `type`.
+        if (event.source !== window) {
+            return; // Ignorar mensagens de outros iframes ou janelas
+        }
 
-    ele('stringsFSistHtml').addEventListener('click', function() {
-        MsgF(); // Esconde o loader
-        const decodedHtml = atob(this.value);
-        console.log("Extensão enviou HTML:", decodedHtml);
-        MsgInf("A extensão recebeu uma resposta HTML. Verifique os logs do console para detalhes.");
-    });
-
-    ele('stringsFSistDados').addEventListener('click', function() {
-        MsgF(); // Esconde o loader
-        const decodedData = atob(this.value);
-        console.log("Extensão enviou dados:", decodedData);
-        // Você pode processar esses dados se necessário.
-    });
-
-    ele('stringsFSistLink').addEventListener('click', function() {
-        MsgF(); // Esconde o loader
-        const decodedLink = atob(this.value);
-        console.log("Extensão enviou link (PDF):", decodedLink);
-        window.fsistResult = { linkPDF: decodedLink, linkXML: null }; // Armazena o link PDF
-        ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
-        MsgInf('Link de PDF recebido da extensão. Você pode visualizar ou aguardar o XML.');
-    });
-
-    ele('stringsFSistXml').addEventListener('click', function() {
-        MsgF(); // Esconde o loader
-        const decodedXml = atob(this.value);
-        console.log("Extensão enviou XML:", decodedXml);
-        currentXmlContent = decodedXml; // Armazena o XML recebido
-        // Se já tiver linkPDF, mantém. Se não, define.
-        window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${this.value}` }; // Armazena o XML como data URL
-        ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
-        MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
+        switch (event.data.type) {
+            case "FSIST_HTML_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedHtml = atob(event.data.content);
+                console.log("Extensão enviou HTML:", decodedHtml);
+                MsgInf("A extensão recebeu uma resposta HTML. Verifique os logs do console para detalhes.");
+                break;
+            case "FSIST_DATA_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedData = atob(event.data.content);
+                console.log("Extensão enviou dados:", decodedData);
+                // Você pode processar esses dados se necessário.
+                break;
+            case "FSIST_LINK_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedLink = atob(event.data.content);
+                console.log("Extensão enviou link (PDF):", decodedLink);
+                window.fsistResult = { linkPDF: decodedLink, linkXML: null }; // Armazena o link PDF
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('Link de PDF recebido da extensão. Você pode visualizar ou aguardar o XML.');
+                break;
+            case "FSIST_XML_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedXml = atob(event.data.content);
+                console.log("Extensão enviou XML:", decodedXml);
+                currentXmlContent = decodedXml; // Armazena o XML recebido
+                // Se já tiver linkPDF, mantém. Se não, define.
+                window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${event.data.content}` }; // Armazena o XML como data URL
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
+                break;
+        }
     });
 
     // Event listener para o botão Gerar DANFE
