@@ -771,7 +771,11 @@
                 break;
             case "FSIST_CERTIFICADO_ERROR": // NOVO: Tratamento para erro de certificado
                 MsgF(); // Esconde o loader
-                const errorHtmlContent = atob(event.data.content); // Conteúdo HTML da página de erro
+                // Decodifica corretamente a string Base64 UTF-8
+                const errorHtmlContent = decodeURIComponent(atob(event.data.content).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
                 console.error("Erro de Certificado (HTML):", errorHtmlContent);
 
                 let userFriendlyMessage = "Erro desconhecido. Por favor, verifique o console para mais detalhes.";
