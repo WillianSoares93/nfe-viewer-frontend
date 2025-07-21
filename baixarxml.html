@@ -1,392 +1,818 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerar DANFe/DACTe - NF-e Viewer</title>
-    <!-- Tailwind CSS para estilização moderna -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
-    <!-- jQuery, Popper.js e Bootstrap JS para modais -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        /* Estilos personalizados para o layout e componentes */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container-card {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-        .btn-custom {
-            /* Estilos Tailwind aplicados diretamente para botões */
-            @apply bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-700 transition duration-300 ease-in-out flex items-center justify-center;
-        }
-        .btn-custom svg {
-            margin-right: 8px;
-        }
-        .form-control-custom {
-            /* Estilos Tailwind aplicados diretamente para textarea */
-            @apply border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-        }
-        .modal-content {
-            border-radius: 12px;
-        }
-        .modal-body {
-            padding: 20px;
-            font-size: 16px;
-        }
-        .modal-footer {
-            border-top: none;
-            padding: 15px 20px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download XML e PDF NF-e/CT-e</title>
+  <!-- Link para o Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Estilos globais para o corpo da página e variáveis de cor */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa; /* Fundo cinza claro */
+      color: #333; /* Cor de texto padrão */
+      display: flex; /* Usar flexbox para o layout principal */
+      flex-direction: column; /* Conteúdo em coluna */
+      min-height: 100vh; /* Ocupa a altura total da viewport */
+    }
+
+    :root {
+      --primary-orange: #f26522; /* Laranja principal */
+      --primary-blue: #003366; /* Azul principal */
+    }
+
+    /* Estilos para títulos */
+    h1, h4, h5 {
+      font-weight: 600; /* Negrito */
+      color: var(--primary-blue); /* Cor azul */
+    }
+
+    /* Estilos para o cabeçalho do card */
+    .card-header {
+      background-color: var(--primary-orange); /* Fundo laranja */
+      color: white; /* Texto branco */
+      font-weight: 500;
+      border-bottom: 2px solid var(--primary-blue); /* Borda inferior azul */
+    }
+
+    /* Estilos para todos os cards */
+    .card {
+      border: 2px solid #adb5bd; /* Borda cinza mais escura */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+
+    /* Estilo para a sobreposição do loader (indicador de carregamento) */
+    .loader-overlay {
+      position: fixed; /* Fixado na tela */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+      z-index: 9999; /* Acima de tudo */
+      display: none; /* ESCONDIDO POR PADRÃO */
+      flex-direction: column; /* Conteúdo em coluna */
+      justify-content: center; /* Centraliza verticalmente */
+      align-items: center; /* Centraliza horizontalmente */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+    .loader-content { /* Novo estilo para centralizar o conteúdo do loader */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .loader {
+      border: 8px solid #f3f3f3; /* Borda cinza clara */
+      border-top: 8px solid var(--primary-orange); /* Borda superior laranja (para o spinner) */
+      border-radius: 50%; /* Faz um círculo */
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite; /* Animação de rotação */
+    }
+    .loader-text {
+      color: white; /* Texto branco */
+      margin-top: 10px; /* Espaço entre o spinner e o texto */
+      font-size: 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Estilos para as seções de conteúdo (agora páginas separadas) */
+    .content-section {
+      padding: 40px 20px;
+      flex-grow: 1; /* Permite que ocupe o espaço disponível */
+      text-align: center; /* Centraliza o conteúdo da seção */
+    }
+
+    .content-section h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .content-section p {
+      margin-bottom: 15px;
+      text-align: justify; /* Justifica o texto para melhor leitura */
+      max-width: 800px; /* Limita a largura do parágrafo */
+      margin-left: auto; /* Centraliza o parágrafo */
+      margin-right: auto; /* Centraliza o parágrafo */
+    }
+
+    .content-section ul {
+        list-style-type: disc;
+        margin-left: auto; /* Centraliza a lista */
+        margin-right: auto; /* Centraliza a lista */
+        max-width: 800px; /* Limita a largura da lista */
+        padding-left: 40px; /* Ajusta o padding para a lista */
+        text-align: justify; /* Justifica o texto da lista */
+    }
+
+    .content-section ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Estilo para o botão de voltar */
+    .btn-back-to-main {
+        margin-top: 20px;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-back-to-main:hover {
+        background-color: #002244; /* Azul mais escuro no hover */
+    }
+
+    /* Estilos para o rodapé */
+    .footer {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: auto; /* Empurra o rodapé para o final da página */
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: text-decoration 0.3s ease;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Estilo para o logo na navbar */
+    .navbar-brand img {
+      height: 30px; /* Altura do logo */
+      margin-right: 10px; /* Espaçamento à direita do logo */
+      border-radius: 4px; /* Bordas arredondadas para o logo na navbar */
+      background-color: transparent; /* Fundo transparente para o logo */
+      padding: 0; /* Remove o preenchimento */
+    }
+
+    /* Estilos do formulário de download */
+    .download-form-container {
+        max-width: 600px; /* Largura máxima para o formulário */
+        margin: 0 auto; /* Centraliza o formulário */
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .download-form-container h1 {
+        color: var(--primary-blue);
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+
+    .download-form-container #chave-description {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .form-field-group {
+        background: #ebeff1;
+        color: #596364;
+        margin-bottom: 27px;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex; /* Usar flexbox para alinhar label e input */
+        align-items: center;
+        padding: 0 15px; /* Padding para o grupo */
+    }
+
+    .form-field-group label {
+        flex-shrink: 0; /* Não encolher a label */
+        margin-right: 10px; /* Espaçamento entre label e input */
+        font-size: 18px;
+        color: #596364;
+    }
+
+    .form-field-group input[type="text"],
+    .form-field-group select {
+        color: #596364;
+        font-size: 18px;
+        background: #ebeff1;
+        line-height: 2.5rem;
+        width: 100%;
+        border: 0;
+        outline: 0;
+        padding: 0; /* Removido padding individual, agora no grupo */
+        box-sizing: border-box;
+    }
+
+    .form-buttons button {
+        cursor: pointer;
+        border: 0px none;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+        background-color: var(--primary-orange);
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        margin: 0 5px; /* Espaçamento entre botões */
+    }
+
+    .form-buttons button:hover {
+        background-color: #d85c1b;
+    }
+
+    /* Estilo para o logo na página de Download */
+    .download-logo {
+      max-width: 150px; /* Tamanho do logo */
+      height: auto;
+      margin-bottom: 20px; /* Espaçamento abaixo do logo */
+      border-radius: 8px; /* Bordas arredondadas */
+    }
+
+    /* Estilos para o Modal de Mensagens Customizado */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .custom-modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .custom-modal-overlay.show .custom-modal-content {
+        transform: translateY(0);
+    }
+
+    .custom-modal-content h2 {
+        color: var(--primary-blue);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .custom-modal-content p {
+        color: #555;
+        margin-bottom: 25px;
+        font-size: 1rem;
+    }
+
+    .custom-modal-buttons button {
+        background-color: var(--primary-orange);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-modal-buttons button:hover {
+        background-color: #d85c1b;
+    }
+
+    .custom-modal-buttons button.cancel-btn {
+        background-color: #6c757d;
+    }
+
+    .custom-modal-buttons button.cancel-btn:hover {
+        background-color: #5a6268;
+    }
+
+    /* Responsividade para telas menores */
+    @media (max-width: 768px) {
+      .content-section h1 {
+        font-size: 1.5rem;
+      }
+      .footer a {
+          display: block;
+          margin: 5px 0;
+      }
+      .download-form-container {
+        padding: 20px;
+      }
+      .form-field-group input,
+      .form-field-group select {
+        font-size: 16px;
+        line-height: 2rem;
+      }
+      .form-buttons button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container-card">
-        <h5 class="text-2xl font-semibold mb-4 text-gray-800">Gerar DANFe ou DACTe</h5>
-        <p class="text-sm text-gray-600 mb-6">Insira o XML no campo abaixo ou consulte pela chave de acesso para converter para PDF (DANFe/DACTe).</p>
-        
-        <textarea class="form-control-custom mb-4" id="textXML" rows="8" placeholder="Cole o XML da NF-e ou CT-e aqui..."></textarea>
-        
-        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
-            <button id="butGerar" type="button" class="btn-custom w-full sm:w-1/2">
-                <i class="fas fa-file-upload"></i> Gerar a partir do XML
-            </button>
-            <button id="butConsultarChave" type="button" class="btn-custom w-full sm:w-1/2 bg-blue-600 hover:bg-blue-700">
-                <i class="fas fa-key"></i> Consultar pela Chave
-            </button>
-        </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        NF-e Viewer
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/baixarxml.html">Download XML</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sobre">Sobre</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/politica-de-privacidade">Política de Privacidade</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/termos-de-uso">Termos de Uso</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contato">Contato</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-        <!-- Container para as opções de download/visualização, inicialmente oculto -->
-        <div id="optionsContainer" class="hidden mt-6 p-4 bg-gray-100 rounded-lg">
-            <h6 class="text-lg font-semibold mb-3 text-gray-700">Opções para a Nota Fiscal:</h6>
-            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <button id="butBaixarXML" type="button" class="btn-custom w-full sm:w-1/3 bg-purple-600 hover:bg-purple-700">
-                    <i class="fas fa-download"></i> Baixar XML
-                </button>
-                <button id="butVisualizarNota" type="button" class="btn-custom w-full sm:w-1/3 bg-indigo-600 hover:bg-indigo-700">
-                    <i class="fas fa-eye"></i> Visualizar Nota
-                </button>
-                <button id="butGerarDanfeDacte" type="button" class="btn-custom w-full sm:w-1/3 bg-red-600 hover:bg-red-700">
-                    <i class="fas fa-file-pdf"></i> Gerar DANFe/DACTe
-                </button>
+  <!-- Sobreposição do Loader (para mensagens de progresso) -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="loader-content">
+        <div class="loader"></div>
+        <p id="loaderText" class="loader-text">Carregando...</p>
+    </div>
+  </div>
+
+  <!-- Modal de Mensagens Customizado (para MsgInf e MsgQue) -->
+  <div id="customMessageModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+          <h2 id="customModalTitle"></h2>
+          <p id="customModalMessage"></p>
+          <div class="custom-modal-buttons">
+              <button id="customModalConfirmBtn" style="display: none;">Confirmar</button>
+              <button id="customModalCloseBtn">Fechar</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Seção de Download -->
+  <div id="download-section" class="content-section container">
+    <div class="download-form-container">
+        <img src="logo.png" alt="Logo NF-e Viewer" class="download-logo" onerror="this.onerror=null; this.src='https://placehold.co/150x150/003366/FFFFFF?text=Logo';">
+        <h1 id="main-title">Baixar XML de NF-e/CT-e</h1>
+        <div id="chave-description">Download de XML e DANFe com a chave.</div>
+
+        <div id="divDados">
+            <div class="form-field-group">
+                <label for="chave">Chave de Acesso:</label>
+                <input type="text" id="chave" placeholder="Digite a Chave de Acesso (44 dígitos)" maxlength="44" onkeyup="ContarCaracteres();">
             </div>
-        </div>
-
-        <!-- Modal para mensagens informativas (MsgInf) -->
-        <div class="modal fade" id="msg1" tabindex="-1" role="dialog" aria-labelledby="msg1Label" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-body" id="msg1texto">
-                        <!-- O conteúdo da mensagem será injetado aqui -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success rounded-lg" data-dismiss="modal">OK</button>
-                    </div>
-                </div>
+            
+            <div class="form-field-group">
+                <label for="tipoDocumento">Tipo:</label>
+                <select id="tipoDocumento" onchange="TipoDocumentoSelecionado()">
+                    <option value="NFe">NF-e (Nota Fiscal Eletrônica)</option>
+                    <option value="CTe">CT-e (Conhecimento de Transporte Eletrônico)</option>
+                </select>
             </div>
-        </div>
 
-        <!-- Modal para loader (Aguarde) -->
-        <div class="modal fade" id="msg2" tabindex="-1" role="dialog" aria-labelledby="msg2Label" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Carregando...</span>
-                        </div>
-                        <p class="mt-3 text-gray-700">Aguarde...</p>
-                    </div>
+            <div class="form-buttons">
+                <button onclick="consultarNota()">CONSULTAR NOTA</button>
+                <button onclick="novaConsulta()">NOVA CONSULTA</button>
+            </div>
+
+            <!-- Div para exibir resultados da consulta (re-adicionada para os links de download) -->
+            <div id="resultadoConsulta" style="display: none; margin-top: 20px;">
+                <h4 style="color: var(--primary-blue);">Resultados da Consulta:</h4>
+                <div class="form-buttons" style="margin-top: 15px;">
+                    <button id="gerarDanfeBtn" class="btn btn-primary">GERAR DANFE</button>
+                    <button onclick="visualizarNota()">VISUALIZAR NOTA (PDF)</button>
+                    <button onclick="downloadXml()">DOWNLOAD XML</button>
                 </div>
             </div>
         </div>
     </div>
+    <div class="text-center mt-4">
+        <button class="btn btn-back-to-main" onclick="window.location.href='/'">Voltar</button>
+    </div>
+  </div>
 
-    <!-- Inputs ocultos para comunicação com a extensão (via script.js) -->
-    <input type="hidden" id="stringsFSistHtml" />
-    <input type="hidden" id="stringsFSistLink" />
-    <input type="hidden" id="stringsFSistDados" />
-    <input type="hidden" id="stringsFSistXml" /> <!-- Adicionado para o conteúdo XML -->
-    <input type="hidden" id="stringsFSIST_CONFIG" />
+  <!-- Rodapé da Página -->
+  <footer class="footer">
+    <div>
+      © 2025 NF-e Viewer. Todos os direitos reservados.
+    </div>
+    <div class="mt-2">
+      <a href="/sobre">Sobre</a> |
+      <a href="/politica-de-privacidade">Política de Privacidade</a> |
+      <a href="/termos-de-uso">Termos de Uso</a> |
+      <a href="/contato">Contato</a> |
+      <a href="/baixarxml.html">Download XML</a>
+    </div>
+  </footer>
 
-    <script>
-        // Variáveis globais para armazenar a chave e o tipo de documento
-        let chaveAcessoGlobal = '';
-        let tipoDocumentoGlobal = ''; // 'NFe' ou 'CTe'
+  <!-- Campos ocultos para comunicação com a extensão -->
+  <input type="hidden" id="stringsFSistChave" value="">
+  <input type="hidden" id="stringsFSistUrl" value="">
+  <button type="button" id="stringsFSistClick" style="display: none;"></button> 
+  <input type="hidden" id="stringsFSistHtml" value="">
+  <input type="hidden" id="stringsFSistDados" value="">
+  <input type="hidden" id="stringsFSistLink" value="">
+  <input type="hidden" id="stringsFSistXml" value="">
+  <input type="hidden" id="stringsFSIST_CONFIG" value="">
+  <input type="hidden" id="stringsFSistVersao" value="">
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Funções auxiliares para exibir/ocultar modais
-            function MsgInf(msg) {
-                $('#msg1texto').text(msg);
-                $('#msg1').modal('show');
+  <!-- Link para o Bootstrap JS (com Popper.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Link para a biblioteca JSZip (para descompactar arquivos ZIP) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    function ele(id) {
+        return document.getElementById(id);
+    }
+
+    // Referências aos elementos do modal customizado
+    const customMessageModal = ele('customMessageModal');
+    const customModalTitle = ele('customModalTitle');
+    const customModalMessage = ele('customModalMessage');
+    const customModalCloseBtn = ele('customModalCloseBtn');
+    const customModalConfirmBtn = ele('customModalConfirmBtn');
+
+    let currentMsgQueCallback = null;
+    let currentXmlContent = ''; // Variável para armazenar o conteúdo XML
+
+    // URL base do seu servidor proxy
+    const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // Certifique-se de que esta URL está correta
+
+    if (customModalCloseBtn) {
+        customModalCloseBtn.addEventListener('click', () => {
+            customMessageModal.classList.remove('show');
+            if (currentMsgQueCallback && typeof currentMsgQueCallback.no === 'function') {
+                currentMsgQueCallback.no();
             }
+            currentMsgQueCallback = null;
+        });
+    }
 
-            function Aguarde() {
-                $('#msg2').modal('show');
+    if (customModalConfirmBtn) {
+        customModalConfirmBtn.addEventListener('click', () => {
+            customMessageModal.classList.remove('show');
+            if (currentMsgQueCallback && typeof currentMsgQueCallback.yes === 'function') {
+                currentMsgQueCallback.yes();
             }
+            currentMsgQueCallback = null;
+        });
+    }
 
-            function AguardeClose() {
-                $('#msg2').modal('hide');
+    function MsgInf(message, callback) {
+        if (customModalTitle) customModalTitle.textContent = "Informação";
+        if (customModalMessage) customModalMessage.textContent = message;
+        if (customModalConfirmBtn) customModalConfirmBtn.style.display = 'none';
+        if (customModalCloseBtn) {
+            customModalCloseBtn.textContent = 'Fechar';
+            customModalCloseBtn.classList.remove('cancel-btn');
+        }
+        if (customMessageModal) customMessageModal.classList.add('show');
+
+        const closeHandler = () => {
+            customMessageModal.classList.remove('show');
+            customModalCloseBtn.removeEventListener('click', closeHandler);
+            if (callback) callback();
+        };
+        customModalCloseBtn.addEventListener('click', closeHandler);
+    }
+
+    function MsgQue(message, callbackYes, callbackNo) {
+        if (customModalTitle) customModalTitle.textContent = "Confirmação";
+        if (customModalMessage) customModalMessage.textContent = message;
+        if (customModalConfirmBtn) {
+            customModalConfirmBtn.textContent = 'Sim';
+            customModalConfirmBtn.style.display = 'inline-block';
+        }
+        if (customModalCloseBtn) {
+            customModalCloseBtn.textContent = 'Não';
+            customModalCloseBtn.classList.add('cancel-btn');
+        }
+        if (customMessageModal) customMessageModal.classList.add('show');
+
+        currentMsgQueCallback = { yes: callbackYes, no: callbackNo };
+    }
+
+    function MsgB(title) {
+        const loaderOverlay = ele('loaderOverlay');
+        const loaderText = ele('loaderText');
+        if (loaderText) loaderText.textContent = title;
+        if (loaderOverlay) loaderOverlay.style.display = 'flex';
+    }
+
+    function MsgF() {
+        const loaderOverlay = ele('loaderOverlay');
+        if (loaderOverlay) loaderOverlay.style.display = 'none';
+    }
+
+    // --- Funções Específicas da Página de Download ---
+
+    function ContarCaracteres() {
+        // Lógica de contagem de caracteres, se necessário.
+    }
+
+    function TipoDocumentoSelecionado() {
+        // Lógica para ajustar a UI ou validação com base no tipo selecionado, se necessário
+    }
+
+    async function consultarNota() {
+        const chave = ele('chave').value.trim();
+        const tipoDocumento = ele('tipoDocumento').value;
+
+        if (chave === '') {
+            MsgInf('É necessário digitar a chave de acesso.');
+            return;
+        }
+        if (chave.length !== 44) {
+            MsgInf(`A chave informada tem ${chave.length} dígitos, mas deve ter 44 dígitos.`);
+            return;
+        }
+
+        MsgB('Abrindo janela da SEFAZ via extensão...');
+
+        try {
+            // Preenche os campos ocultos que a extensão espera
+            ele('stringsFSistChave').value = chave;
+            
+            let sefazUrl = '';
+            if (tipoDocumento === 'NFe') {
+                // URL para consulta de NF-e, tipo 'resumo' com o tipoConteudo do FSist
+                sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=`;
+            } else if (tipoDocumento === 'CTe') {
+                // URL para consulta de CT-e, tipo 'resumo' (mantendo o tipoConteudo original para CT-e)
+                sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=mCK/KoCqru0=`;
             }
+            ele('stringsFSistUrl').value = sefazUrl;
 
-            // Função para extrair a chave do XML (mantida do seu código original)
-            function getChave(xml) {
-                if (xml.includes(' Id="NFe')) {
-                    tipoDocumentoGlobal = 'NFe';
-                    return StrEntreStr(' Id="NFe', '"', xml);
-                } else if (xml.includes(' Id="CTe')) {
-                    tipoDocumentoGlobal = 'CTe';
-                    return StrEntreStr(' Id="CTe', '"', xml);
-                }
-                tipoDocumentoGlobal = ''; // Reseta se nenhuma chave for encontrada
-                return '';
-            }
+            // Simula o clique no botão oculto que a extensão está escutando
+            // O script.js da extensão tem um listener para o click deste elemento.
+            ele('stringsFSistClick').click();
 
-            // Função auxiliar para extrair string entre duas outras strings (mantida do seu código original)
-            function StrEntreStr(str1, str2, str) {
-                var ini = str.indexOf(str1);
-                if (ini > -1) {
-                    ini += str1.length;
-                    var fim = str.indexOf(str2, ini);
-                    if (fim > -1) {
-                        var res = str.substring(ini, fim);
-                        return res;
-                    }
-                }
-                return '';
-            }
+            // A extensão agora lidará com a abertura da janela e o reCAPTCHA.
+            // A resposta (link PDF/XML) virá via eventos de click nos campos ocultos.
 
-            // Função para extrair mensagem de erro do HTML da SEFAZ (útil para depuração)
-            function extractErrorMessage(htmlContent) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlContent, 'text/html');
-                const errorMessageElement = doc.getElementById('ctl00_ContentPlaceHolder1_lblMensagemErro');
-                return errorMessageElement ? errorMessageElement.textContent.trim() : 'Erro desconhecido';
-            }
+        } catch (error) {
+            MsgF();
+            console.error("Erro ao iniciar consulta via extensão:", error);
+            MsgInf('Erro ao tentar se comunicar com a extensão. Certifique-se de que a extensão está instalada e ativa com as permissões corretas.');
+        }
+    }
 
-            // Função para baixar o conteúdo XML como um arquivo
-            function downloadXml(xmlContent, fileName) {
-                const blob = new Blob([xmlContent], { type: 'text/xml' });
-                const url = URL.createObjectURL(blob);
+    function visualizarNota() {
+        if (window.fsistResult && window.fsistResult.linkPDF) {
+            window.open(window.fsistResult.linkPDF, '_blank');
+        } else {
+            MsgInf('Nenhum link de PDF disponível para visualização.');
+        }
+    }
+
+    function downloadXml() {
+        if (window.fsistResult && window.fsistResult.linkXML) {
+            // Se o linkXML for um data URL (base64), cria um link para download
+            if (window.fsistResult.linkXML.startsWith('data:')) {
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName || `nota_fiscal_${chaveAcessoGlobal}.xml`;
+                a.href = window.fsistResult.linkXML;
+                a.download = 'nota_fiscal.xml'; // Nome do arquivo para download
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                MsgInf("XML baixado com sucesso!");
+            } else {
+                window.open(window.fsistResult.linkXML, '_blank');
             }
+        } else {
+            MsgInf('Nenhum link de XML disponível para download.');
+        }
+    }
 
-            // Função para visualizar a nota (abre o XML em uma nova aba do navegador)
-            function viewNote(xmlContent) {
-                const blob = new Blob([xmlContent], { type: 'text/xml' });
-                const url = URL.createObjectURL(blob);
-                window.open(url, '_blank');
-                URL.revokeObjectURL(url);
-            }
+    async function gerarDanfe() {
+        if (!currentXmlContent) {
+            MsgInf("Conteúdo XML não carregado. Não é possível gerar DANFE.");
+            return;
+        }
 
-            // Função para buscar o XML via proxy (se a consulta direta à SEFAZ falhar)
-            async function fetchXmlViaProxy(chave, tipo) {
-                console.log("fetchXmlViaProxy() chamada. Tentando obter XML via proxy...");
-                Aguarde(); // Exibe o loader
+        MsgB('Gerando DANFE do XML...'); // Exibe loader
+
+        try {
+            const formData = new FormData();
+            // Cria um objeto File a partir do conteúdo XML
+            const xmlFile = new File([currentXmlContent], "nfe.xml", { type: "text/xml" });
+            formData.append("arquivo", xmlFile); // Adiciona o arquivo ao FormData
+
+            // Requisição para o seu servidor proxy
+            const proxyApiUrl = `${PROXY_BASE_URL}/proxy-fsist-gerarpdf`;
+
+            console.log(`Enviando XML para proxy: ${proxyApiUrl}`);
+            const responseProxy = await fetch(proxyApiUrl, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!responseProxy.ok) {
+                let errorData;
                 try {
-                    const proxyUrl = 'https://nefinfo.onrender.com/proxy-sefaz-xml'; // URL do seu servidor proxy
-                    const response = await fetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ chave: chave, tipo: tipo })
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error(`Erro ao obter XML via proxy: ${response.status} . Detalhes: ${errorText}`);
-                        throw new Error(`Falha ao obter XML via proxy: ${errorText}`);
-                    }
-
-                    const result = await response.json();
-                    if (result.xmlContent) {
-                        console.log("XML obtido com sucesso via proxy.");
-                        // Envia o XML recebido do proxy para a própria página via postMessage
-                        // Isso simula o fluxo como se a extensão tivesse enviado o XML
-                        window.postMessage({ type: "FSIST_XML_RECEIVED", content: btoa(result.xmlContent) }, "*");
-                    } else {
-                        throw new Error("Resposta do proxy não contém 'xmlContent'.");
-                    }
-                } catch (error) {
-                    console.error("Erro em fetchXmlViaProxy:", error);
-                    MsgInf("Não foi possível obter o XML via proxy: " + error.message);
-                } finally {
-                    AguardeClose(); // Oculta o loader
+                    errorData = await responseProxy.json();
+                } catch (e) {
+                    errorData = { error: await responseProxy.text() };
                 }
+                console.error(`Erro do proxy: ${responseProxy.status} - ${errorData.error || responseProxy.statusText}`);
+                throw new Error(errorData.error || `Erro ao se comunicar com o proxy: ${responseProxy.status} ${responseProxy.statusText}`);
             }
 
-            // Função para exibir as opções de download/visualização/geração do DANFe/DACTe
-            function showDownloadOptions(xmlContent) {
-                document.getElementById('optionsContainer').classList.remove('hidden');
+            const resultDataFsist = await responseProxy.json();
+
+            if (resultDataFsist.Resultado === "OK" && resultDataFsist.id && resultDataFsist.Arquivo) {
+                MsgB('Baixando arquivo ZIP...');
+                const zipDownloadUrl = `${PROXY_BASE_URL}/proxy-fsist-downloadzip?id=${resultDataFsist.id}&arq=${encodeURIComponent(resultDataFsist.Arquivo)}`;
+
+                const zipResponse = await fetch(zipDownloadUrl);
+
+                if (!zipResponse.ok) {
+                    const errorText = await zipResponse.text();
+                    throw new Error(`Erro ao baixar o arquivo ZIP via proxy: ${zipResponse.status} ${zipResponse.statusText}. Detalhes: ${errorText}`);
+                }
+                const zipBlob = await zipResponse.blob();
+
+                MsgB('Descompactando PDF...');
+                if (typeof JSZip === "undefined") {
+                    throw new Error("Biblioteca JSZip não carregada. Verifique as inclusões de script.");
+                }
+                const jszip = new JSZip();
+                const zip = await jszip.loadAsync(zipBlob);
+
+                let pdfFileEntry = null;
+                for (const filenameInZip in zip.files) {
+                    if (filenameInZip.toLowerCase().endsWith(".pdf")) {
+                        pdfFileEntry = zip.files[filenameInZip];
+                        break;
+                    }
+                }
+
+                if (pdfFileEntry) {
+                    const pdfArrayBuffer = await pdfFileEntry.async("arraybuffer");
+                    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+                    window.open(pdfUrl, '_blank');
+
+                    MsgB('DANFE pronta!');
+
+                } else {
+                    throw new Error("PDF não encontrado no arquivo ZIP retornado pela API.");
+                }
+            } else {
+                throw new Error(`Erro retornado pela API FSist: ${resultDataFsist.Resultado || 'Resposta inesperada.'}`);
+            }
+
+        } catch (error) {
+            console.error("Erro ao gerar DANFE:", error);
+            MsgInf("Erro ao Gerar DANFE", error.message);
+        } finally {
+            setTimeout(() => {
+                MsgF();
+            }, 1500);
+        }
+    }
+
+    function novaConsulta() {
+        ele('chave').value = '';
+        ele('tipoDocumento').value = 'NFe';
+        ele('resultadoConsulta').style.display = 'none'; // Esconde os resultados
+        window.fsistResult = null;
+        currentXmlContent = ''; // Limpa o XML armazenado
+        ele('chave').focus();
+        MsgInf('Pronto para uma nova consulta!');
+    }
+
+    // --- NOVO: Listener para mensagens do script de conteúdo da extensão ---
+    window.addEventListener('message', function(event) {
+        // É crucial verificar a origem da mensagem e o tipo para evitar ataques XSS
+        // Neste caso, como a mensagem vem do nosso próprio script de conteúdo,
+        // podemos verificar o `event.source` ou o `event.origin` se a extensão
+        // estiver em um domínio diferente. Para simplificar, verificaremos o `type`.
+        if (event.source !== window) {
+            return; // Ignorar mensagens de outros iframes ou janelas
+        }
+
+        switch (event.data.type) {
+            case "FSIST_HTML_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedHtml = atob(event.data.content);
+                console.log("Extensão enviou HTML:", decodedHtml);
+                MsgInf("A extensão recebeu uma resposta HTML. Verifique os logs do console para detalhes.");
+                break;
+            case "FSIST_DATA_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedData = atob(event.data.content);
+                console.log("Extensão enviou dados:", decodedData);
+                // Você pode processar esses dados se necessário.
+                break;
+            case "FSIST_LINK_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedLink = atob(event.data.content);
+                console.log("Extensão enviou link (PDF):", decodedLink);
+                window.fsistResult = { linkPDF: decodedLink, linkXML: null }; // Armazena o link PDF
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('Link de PDF recebido da extensão. Você pode visualizar ou aguardar o XML.');
+                break;
+            case "FSIST_XML_RECEIVED":
+                MsgF(); // Esconde o loader
+                const decodedXml = atob(event.data.content);
+                console.log("Extensão enviou XML:", decodedXml);
+                currentXmlContent = decodedXml; // Armazena o XML recebido
+                // Se já tiver linkPDF, mantém. Se não, define.
+                window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${event.data.content}` }; // Armazena o XML como data URL
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
+                break;
+            case "FSIST_CERTIFICADO_ERROR": // NOVO: Tratamento para erro de certificado
+                MsgF(); // Esconde o loader
+                // Decodifica corretamente a string Base64 UTF-8
+                const errorHtmlContent = decodeURIComponent(atob(event.data.content).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
                 
-                // Configura o botão "Baixar XML"
-                document.getElementById('butBaixarXML').onclick = function() {
-                    downloadXml(xmlContent, `${chaveAcessoGlobal}.xml`);
-                };
+                console.error("Erro de Certificado (HTML):", errorHtmlContent);
 
-                // Configura o botão "Visualizar Nota"
-                document.getElementById('butVisualizarNota').onclick = function() {
-                    viewNote(xmlContent);
-                };
-
-                // Configura o botão "Gerar DANFe/DACTe"
-                document.getElementById('butGerarDanfeDacte').onclick = async function() {
-                    Aguarde(); // Exibe o loader
-                    try {
-                        const formData = new FormData();
-                        const blob = new Blob([xmlContent], { type: 'text/xml' });
-                        formData.append('arquivo', blob, `${chaveAcessoGlobal}.xml`);
-
-                        const proxyPdfUrl = 'https://nefinfo.onrender.com/proxy-fsist-gerarpdf'; // URL do seu proxy para geração de PDF
-                        const response = await fetch(proxyPdfUrl, {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            throw new Error(`Falha ao gerar PDF via proxy: ${response.status} - ${errorText}`);
-                        }
-
-                        const result = await response.json();
-                        if (result.link) {
-                            // Link para download do PDF gerado pela FSist
-                            const pdfLink = `https://www.fsist.com.br/${result.link}`;
-                            window.open(pdfLink, '_blank'); // Abre em nova aba
-                            MsgInf("DANFe/DACTe gerado com sucesso! Abrindo em nova aba para download.");
-                        } else {
-                            throw new Error("Resposta do proxy não contém link para PDF.");
-                        }
-                    } catch (error) {
-                        console.error("Erro ao gerar DANFe/DACTe:", error);
-                        MsgInf("Não foi possível gerar DANFe/DACTe: " + error.message);
-                    } finally {
-                        AguardeClose(); // Oculta o loader
-                    }
-                };
-            }
-
-            // Listener para o botão "Gerar a partir do XML"
-            document.getElementById('butGerar').addEventListener('click', function () {
-                const xmlValue = document.getElementById('textXML').value;
-                if (xmlValue) {
-                    chaveAcessoGlobal = getChave(xmlValue);
-                    if (chaveAcessoGlobal) {
-                        // Se o XML for fornecido diretamente, exibe as opções imediatamente
-                        showDownloadOptions(xmlValue);
-                        MsgInf("XML carregado. Opções de download e geração disponíveis.");
+                let userFriendlyMessage = "Erro desconhecido. Por favor, verifique o console para mais detalhes.";
+                try {
+                    // Tenta parsear o HTML e extrair a mensagem específica
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(errorHtmlContent, "text/html");
+                    const errorMessageElement = doc.getElementById('ctl00_ContentPlaceHolder1_lblMensagemErro');
+                    if (errorMessageElement && errorMessageElement.textContent) {
+                        userFriendlyMessage = errorMessageElement.textContent.trim();
                     } else {
-                        MsgInf("XML inválido. Não foi possível extrair a chave de acesso.");
-                    }
-                } else {
-                    MsgInf("Por favor, insira o XML no campo de texto.");
-                }
-            });
-
-            // Listener para o botão "Consultar pela Chave"
-            document.getElementById('butConsultarChave').addEventListener('click', function () {
-                const chaveInput = document.getElementById('textXML').value; // Usa a mesma textarea para entrada da chave
-                if (chaveInput && chaveInput.length === 44 && !isNaN(chaveInput)) {
-                    chaveAcessoGlobal = chaveInput;
-                    // Heurística simples para determinar o tipo de documento
-                    tipoDocumentoGlobal = chaveInput.startsWith('35') ? 'NFe' : 'CTe'; 
-                    Aguarde(); // Exibe o loader
-                    // Envia mensagem para o script de background da extensão para abrir a janela da SEFAZ
-                    chrome.runtime.sendMessage(
-                        {
-                            tipo: 'AbrirConsulta',
-                            chave: chaveAcessoGlobal,
-                            url: tipoDocumentoGlobal === 'NFe' ? 'https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=' : 'https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=mCK/KoCqru0='
-                        },
-                        function(response) {
-                            console.log("Comando para abrir janela da SEFAZ enviado.", response);
-                            // A resposta do background.js para AbrirConsulta é apenas uma confirmação.
-                            // O XML real virá via window.postMessage do script.js na janela da SEFAZ.
+                        // Fallback se o elemento específico não for encontrado, procurar por texto comum
+                        if (errorHtmlContent.includes('É necessário utilizar certificado digital para acessar esta funcionalidade.')) {
+                            userFriendlyMessage = 'É necessário utilizar certificado digital para acessar esta funcionalidade.';
                         }
-                    );
-                } else {
-                    MsgInf("Por favor, insira uma chave de acesso válida (44 dígitos numéricos) para consultar.");
-                }
-            });
-
-            // Listener para mensagens recebidas do content script (script.js) via window.postMessage
-            window.addEventListener('message', async function(event) {
-                // Garante que a mensagem é da mesma janela (ou de uma fonte confiável, se você tivesse múltiplos iframes/janelas)
-                if (event.source !== window) {
-                    return;
-                }
-                console.log("Mensagem recebida da extensão:", event.data);
-
-                if (event.data.type === 'FSIST_DATA_RECEIVED') {
-                    AguardeClose(); // Oculta o loader
-                    const data = JSON.parse(atob(event.data.content));
-                    console.log("Extensão enviou dados (do formulário da SEFAZ):", data);
-                    // Estes dados são tipicamente para submissão de formulário na página da SEFAZ, não o XML final.
-                    // Se esta mensagem implica um captcha bem-sucedido, podemos tentar buscar o XML via proxy aqui.
-                    // Por enquanto, o fluxo é que FSIST_CERTIFICADO_ERROR dispara o proxy.
-                } else if (event.data.type === 'FSIST_CERTIFICADO_ERROR') {
-                    AguardeClose(); // Oculta o loader
-                    const htmlContent = atob(event.data.content);
-                    console.error("Erro de Certificado (HTML): ", htmlContent);
-                    MsgInf("Erro: " + extractErrorMessage(htmlContent) + ". Tentando obter o XML via proxy...");
-                    // Dispara a busca via proxy se ocorrer erro de certificado
-                    await fetchXmlViaProxy(chaveAcessoGlobal, tipoDocumentoGlobal);
-                } else if (event.data.type === 'FSIST_XML_RECEIVED') {
-                    AguardeClose(); // Oculta o loader
-                    const xmlContent = atob(event.data.content);
-                    console.log("XML recebido da extensão (via proxy ou direto):", xmlContent);
-                    document.getElementById('textXML').value = xmlContent; // Coloca o XML na textarea
-                    showDownloadOptions(xmlContent); // Exibe as novas opções
-                    MsgInf("XML da nota fiscal obtido com sucesso!");
-                }
-            });
-
-            // Listener para mensagens do background script (para configuração inicial do script.js)
-            chrome.runtime.onMessage.addListener(
-                function(request, sender, sendResponse) {
-                    if (request.message === "set_config") {
-                        document.getElementById('stringsFSIST_CONFIG').value = request.content;
-                        console.log("Configuração FSIST recebida e definida.");
-                        sendResponse({status: "OK"});
                     }
-                    return true; // Mantém a porta de mensagem aberta para sendResponse assíncrono
+                } catch (e) {
+                    console.error("Erro ao parsear HTML de erro:", e);
+                    userFriendlyMessage = "Falha ao processar a mensagem de erro do certificado. Por favor, verifique o console.";
                 }
-            );
+                
+                MsgInf(`Erro: ${userFriendlyMessage}. Por favor, verifique se o seu certificado digital está instalado e configurado corretamente.`);
+                ele('resultadoConsulta').style.display = 'none'; // Esconde os botões de resultado
+                break;
+        }
+    });
 
-            // Verificação inicial se já existe XML na textarea (ex: se o usuário colou manualmente)
-            if (document.getElementById('textXML').value) {
-                const xmlValue = document.getElementById('textXML').value;
-                chaveAcessoGlobal = getChave(xmlValue);
-                if (chaveAcessoGlobal) {
-                    showDownloadOptions(xmlValue);
-                }
-            }
-        });
-    </script>
+    // Event listener para o botão Gerar DANFE
+    const gerarDanfeBtn = ele('gerarDanfeBtn');
+    if (gerarDanfeBtn) {
+        gerarDanfeBtn.addEventListener('click', gerarDanfe);
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+        ele('chave').focus();
+    });
+  </script>
 </body>
 </html>
