@@ -421,7 +421,7 @@
                 <button onclick="novaConsulta()">NOVA CONSULTA</button>
             </div>
 
-            <!-- Div para exibir resultados da consulta -->
+            <!-- Div para exibir resultados da consulta (re-adicionada para os links de download) -->
             <div id="resultadoConsulta" style="display: none; margin-top: 20px;">
                 <h4 style="color: var(--primary-blue);">Resultados da Consulta:</h4>
                 <div class="form-buttons" style="margin-top: 15px;">
@@ -451,7 +451,7 @@
     </div>
   </footer>
 
-  <!-- Campos ocultos para comunicação com a extensão (mantidos, mas não usados para a consulta direta) -->
+  <!-- Campos ocultos para comunicação com a extensão -->
   <input type="hidden" id="stringsFSistChave" value="">
   <input type="hidden" id="stringsFSistUrl" value="">
   <button type="button" id="stringsFSistClick" style="display: none;"></button> 
@@ -480,13 +480,9 @@
 
     let currentMsgQueCallback = null;
     let currentXmlContent = ''; // Variável para armazenar o conteúdo XML
-    let currentPdfLink = ''; // Variável para armazenar o link do PDF
 
-    // URL base do seu servidor proxy. VOCÊ PRECISA DE UM SERVIDOR PROXY PARA ISSO.
-    // Exemplo: 'https://seuservidorproxy.com/api/proxy-fsist'
-    // Este proxy deve encaminhar a requisição para 'https://server2.fsist.com.br/baixarxml.ashx?m=WEB'
-    // e adicionar os cabeçalhos CORS apropriados.
-    const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // Exemplo de URL de proxy. Substitua pela sua!
+    // URL base do seu servidor proxy
+    const PROXY_BASE_URL = 'https://nefinfo.onrender.com'; // Certifique-se de que esta URL está correta
 
     if (customModalCloseBtn) {
         customModalCloseBtn.addEventListener('click', () => {
@@ -577,85 +573,59 @@
             return;
         }
 
-        MsgB('Consultando nota via FSist...');
+        MsgB('Abrindo janela da SEFAZ via extensão...');
 
         try {
-            const formData = new FormData();
-            formData.append('m', 'WEB'); // Parâmetro m=WEB conforme observado
-            formData.append('chave', chave);
-            formData.append('tipo', tipoDocumento); // 'NFe' ou 'CTe'
-
-            // URL do servidor proxy que encaminhará para o FSist
-            const proxyFsistApiUrl = `${PROXY_BASE_URL}/proxy-fsist`; 
-
-            console.log(`Enviando requisição para o proxy: ${proxyFsistApiUrl} com chave: ${chave}, tipo: ${tipoDocumento}`);
-
-            const response = await fetch(proxyFsistApiUrl, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                let errorData;
-                try {
-                    errorData = await response.json(); // Tenta ler como JSON
-                } catch (e) {
-                    errorData = { error: await response.text() }; // Se não for JSON, lê como texto
-                }
-                console.error(`Erro do proxy: ${response.status} - ${errorData.error || response.statusText}`);
-                throw new Error(errorData.error || `Erro ao consultar FSist via proxy: ${response.status} ${response.statusText}`);
+            // Preenche os campos ocultos que a extensão espera
+            ele('stringsFSistChave').value = chave;
+            
+            let sefazUrl = '';
+            if (tipoDocumento === 'NFe') {
+                // URL para consulta de NF-e, tipo 'resumo' com o tipoConteudo do FSist
+                sefazUrl = `https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=`;
+            } else if (tipoDocumento === 'CTe') {
+                // URL para consulta de CT-e, tipo 'resumo' (mantendo o tipoConteudo original para CT-e)
+                sefazUrl = `https://www.cte.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=mCK/KoCqru0=`;
             }
+            ele('stringsFSistUrl').value = sefazUrl;
 
-            const result = await response.json();
-            console.log("Resposta do FSist via proxy:", result);
+            // Simula o clique no botão oculto que a extensão está escutando
+            // O script.js da extensão tem um listener para o click deste elemento.
+            ele('stringsFSistClick').click();
 
-            if (result.Resultado === "OK") {
-                currentXmlContent = atob(result.XML); // Decodifica o XML Base64
-                currentPdfLink = result.LinkPDF; // Obtém o link do PDF
-
-                // Atualiza os links para visualização/download
-                // window.fsistResult = { // Removido pois não é mais usado diretamente pelos botões
-                //     linkPDF: currentPdfLink,
-                //     linkXML: `data:application/xml;base64,${result.XML}` // XML como Data URL
-                // };
-
-                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões de resultado
-                MsgInf('Consulta realizada com sucesso! Você pode baixar o XML, visualizar o PDF ou gerar o DANFE.');
-            } else {
-                MsgInf(`Erro na consulta: ${result.Mensagem || 'Resposta inesperada do FSist.'}`);
-                ele('resultadoConsulta').style.display = 'none'; // Esconde os botões
-            }
+            // A extensão agora lidará com a abertura da janela e o reCAPTCHA.
+            // A resposta (link PDF/XML) virá via eventos de click nos campos ocultos.
 
         } catch (error) {
-            console.error("Erro na consulta:", error);
-            MsgInf(`Erro ao consultar a nota: ${error.message}.`);
-            ele('resultadoConsulta').style.display = 'none'; // Esconde os botões
-        } finally {
-            MsgF(); // Esconde o loader
+            MsgF();
+            console.error("Erro ao iniciar consulta via extensão:", error);
+            MsgInf('Erro ao tentar se comunicar com a extensão. Certifique-se de que a extensão está instalada e ativa com as permissões corretas.');
         }
     }
 
     function visualizarNota() {
-        if (currentPdfLink) {
-            window.open(currentPdfLink, '_blank');
+        if (window.fsistResult && window.fsistResult.linkPDF) {
+            window.open(window.fsistResult.linkPDF, '_blank');
         } else {
             MsgInf('Nenhum link de PDF disponível para visualização.');
         }
     }
 
     function downloadXml() {
-        if (currentXmlContent) {
-            const blob = new Blob([currentXmlContent], { type: 'application/xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `NFe_${ele('chave').value}.xml`; // Nome do arquivo
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url); // Libera o URL do objeto
+        if (window.fsistResult && window.fsistResult.linkXML) {
+            // Se o linkXML for um data URL (base64), cria um link para download
+            if (window.fsistResult.linkXML.startsWith('data:')) {
+                const a = document.createElement('a');
+                a.href = window.fsistResult.linkXML;
+                a.download = 'nota_fiscal.xml'; // Nome do arquivo para download
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                window.open(window.fsistResult.linkXML, '_blank');
+            }
         } else {
-            MsgInf('Nenhum conteúdo XML disponível para download.');
+            MsgInf('Nenhum link de XML disponível para download.');
         }
     }
 
@@ -752,13 +722,13 @@
         ele('chave').value = '';
         ele('tipoDocumento').value = 'NFe';
         ele('resultadoConsulta').style.display = 'none'; // Esconde os resultados
+        window.fsistResult = null;
         currentXmlContent = ''; // Limpa o XML armazenado
-        currentPdfLink = ''; // Limpa o link do PDF
         ele('chave').focus();
         MsgInf('Pronto para uma nova consulta!');
     }
 
-    // --- Listener para mensagens da extensão (mantido para outras interações) ---
+    // --- NOVO: Listener para mensagens do script de conteúdo da extensão ---
     window.addEventListener('message', function(event) {
         // É crucial verificar a origem da mensagem e o tipo para evitar ataques XSS
         // Neste caso, como a mensagem vem do nosso próprio script de conteúdo,
@@ -785,21 +755,21 @@
                 MsgF(); // Esconde o loader
                 const decodedLink = atob(event.data.content);
                 console.log("Extensão enviou link (PDF):", decodedLink);
-                // Esta parte pode ser útil se a extensão ainda for usada para obter o PDF separadamente
-                // currentPdfLink = decodedLink; 
-                // ele('resultadoConsulta').style.display = 'block';
-                // MsgInf('Link de PDF recebido da extensão.');
+                window.fsistResult = { linkPDF: decodedLink, linkXML: null }; // Armazena o link PDF
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('Link de PDF recebido da extensão. Você pode visualizar ou aguardar o XML.');
                 break;
             case "FSIST_XML_RECEIVED":
                 MsgF(); // Esconde o loader
                 const decodedXml = atob(event.data.content);
                 console.log("Extensão enviou XML:", decodedXml);
-                // Esta parte pode ser útil se a extensão ainda for usada para obter o XML separadamente
-                // currentXmlContent = decodedXml;
-                // ele('resultadoConsulta').style.display = 'block';
-                // MsgInf('XML recebido da extensão.');
+                currentXmlContent = decodedXml; // Armazena o XML recebido
+                // Se já tiver linkPDF, mantém. Se não, define.
+                window.fsistResult = { ...window.fsistResult, linkXML: `data:application/xml;base64,${event.data.content}` }; // Armazena o XML como data URL
+                ele('resultadoConsulta').style.display = 'block'; // Mostra os botões
+                MsgInf('XML recebido da extensão. Você pode baixar o XML ou visualizar o PDF (se disponível) ou gerar o DANFE.');
                 break;
-            case "FSIST_CERTIFICADO_ERROR": // Tratamento para erro de certificado
+            case "FSIST_CERTIFICADO_ERROR": // NOVO: Tratamento para erro de certificado
                 MsgF(); // Esconde o loader
                 // Decodifica corretamente a string Base64 UTF-8
                 const errorHtmlContent = decodeURIComponent(atob(event.data.content).split('').map(function(c) {
